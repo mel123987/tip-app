@@ -27,138 +27,296 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <style>
+      @keyframes confetti-fall {
+        0% {
+          opacity: 0;
+          transform: translate3d(0, -48px, 0) rotate(0deg) scale(0.8);
+        }
+
+        16% {
+          opacity: 1;
+        }
+
+        100% {
+          opacity: 0;
+          transform: translate3d(var(--fall-x), 190px, 0) rotate(var(--spin)) scale(1);
+        }
+      }
+
+      .success-active #tippingScreen {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-10px) scale(0.97);
+      }
+
+      .success-active #successScreen {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0) scale(1);
+      }
+
+      .confetti-piece {
+        animation: confetti-fall 1.45s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+        animation-delay: var(--delay);
+        background: var(--color);
+        left: var(--left);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+          transition-duration: 0.001ms !important;
+        }
+      }
+    </style>
   </head>
   <body class="min-h-screen bg-[#f7f5f0] text-black antialiased">
     <main
-      class="mx-auto flex min-h-screen w-full max-w-md flex-col bg-white shadow-luxury sm:my-6 sm:min-h-[calc(100vh-3rem)] sm:overflow-hidden sm:rounded-[2.25rem]"
+      id="tipApp"
+      class="relative mx-auto flex min-h-screen w-full max-w-md flex-col overflow-hidden bg-white shadow-luxury sm:my-6 sm:min-h-[calc(100vh-3rem)] sm:rounded-[2.25rem]"
     >
-      <section class="relative flex flex-1 flex-col px-6 pb-36 pt-7 sm:px-8">
-        <div
-          class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,rgba(0,0,0,0.08),transparent_58%)]"
-          aria-hidden="true"
-        ></div>
+      <div
+        id="tippingScreen"
+        class="flex min-h-screen flex-col transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] sm:min-h-[calc(100vh-3rem)]"
+      >
+        <section class="relative flex flex-1 flex-col px-6 pb-36 pt-7 sm:px-8">
+          <div
+            class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,rgba(0,0,0,0.08),transparent_58%)]"
+            aria-hidden="true"
+          ></div>
 
-        <header class="relative z-10 flex items-center justify-between">
-          <p class="text-[0.72rem] font-semibold uppercase tracking-[0.42em] text-black">
-            Tip.
-          </p>
+          <header class="relative z-10 flex items-center justify-between">
+            <p class="text-[0.72rem] font-semibold uppercase tracking-[0.42em] text-black">
+              Tip.
+            </p>
+            <button
+              class="rounded-full border border-black/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.24em] text-black/70 transition hover:border-black hover:text-black"
+              type="button"
+            >
+              Secure
+            </button>
+          </header>
+
+          <div class="relative z-10 mt-12 flex flex-col items-center text-center">
+            <div
+              class="flex h-32 w-32 items-center justify-center rounded-full border border-black/10 bg-gradient-to-br from-[#fbfaf7] via-white to-[#e8e2d8] p-2 shadow-soft"
+            >
+              <div
+                class="flex h-full w-full items-center justify-center rounded-full border border-white bg-[#111111] text-4xl font-light tracking-[-0.08em] text-white"
+                aria-label="Worker photo placeholder"
+              >
+                M
+              </div>
+            </div>
+
+            <p class="mt-8 text-xs font-medium uppercase tracking-[0.34em] text-black/45">
+              Thank your host
+            </p>
+            <h1 class="mt-3 font-display text-6xl font-medium leading-none tracking-[-0.06em] text-black">
+              Marco
+            </h1>
+            <p class="mt-4 max-w-[15rem] text-sm font-light leading-6 text-black/55">
+              Hospitality Specialist at Costa Adeje
+            </p>
+          </div>
+
+          <section class="relative z-10 mt-12" aria-labelledby="tip-options">
+            <div class="flex items-end justify-between">
+              <div>
+                <p class="text-xs font-medium uppercase tracking-[0.32em] text-black/45">
+                  Select amount
+                </p>
+                <h2 id="tip-options" class="mt-2 text-2xl font-light tracking-[-0.04em]">
+                  Leave a tip
+                </h2>
+              </div>
+              <p class="pb-1 text-xs font-light text-black/40">EUR</p>
+            </div>
+
+            <div class="mt-6 grid grid-cols-2 gap-3">
+              <button
+                class="group rounded-[1.35rem] border border-black bg-black px-5 py-6 text-left text-white shadow-soft transition duration-300 hover:-translate-y-0.5 hover:shadow-luxury focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                type="button"
+                aria-pressed="true"
+              >
+                <span class="block text-xs font-medium uppercase tracking-[0.28em] text-white/50">
+                  Classic
+                </span>
+                <span class="mt-5 block text-4xl font-light tracking-[-0.08em]">€2</span>
+              </button>
+
+              <button
+                class="group rounded-[1.35rem] border border-black/10 bg-[#fbfaf8] px-5 py-6 text-left transition duration-300 hover:-translate-y-0.5 hover:border-black hover:bg-white hover:shadow-soft focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                type="button"
+              >
+                <span class="block text-xs font-medium uppercase tracking-[0.28em] text-black/35">
+                  Generous
+                </span>
+                <span class="mt-5 block text-4xl font-light tracking-[-0.08em]">€5</span>
+              </button>
+
+              <button
+                class="group rounded-[1.35rem] border border-black/10 bg-[#fbfaf8] px-5 py-6 text-left transition duration-300 hover:-translate-y-0.5 hover:border-black hover:bg-white hover:shadow-soft focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                type="button"
+              >
+                <span class="block text-xs font-medium uppercase tracking-[0.28em] text-black/35">
+                  Signature
+                </span>
+                <span class="mt-5 block text-4xl font-light tracking-[-0.08em]">€10</span>
+              </button>
+
+              <button
+                class="group rounded-[1.35rem] border border-black/10 bg-white px-5 py-6 text-left transition duration-300 hover:-translate-y-0.5 hover:border-black hover:shadow-soft focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                type="button"
+              >
+                <span class="block text-xs font-medium uppercase tracking-[0.28em] text-black/35">
+                  Bespoke
+                </span>
+                <span class="mt-5 block text-3xl font-light tracking-[-0.06em]">Custom</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="relative z-10 mt-10 rounded-[1.75rem] border border-black/10 bg-[#fbfaf8] p-5">
+            <div class="flex items-start gap-4">
+              <div class="mt-1 h-2 w-2 rounded-full bg-black"></div>
+              <div>
+                <h3 class="text-sm font-medium tracking-[-0.01em]">Private and effortless</h3>
+                <p class="mt-2 text-sm font-light leading-6 text-black/50">
+                  Your appreciation goes directly to Marco through a secure wallet checkout.
+                </p>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <footer
+          class="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-md border-t border-black/10 bg-white/90 px-6 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] pt-4 shadow-[0_-18px_50px_rgba(255,255,255,0.95)] backdrop-blur-xl sm:absolute sm:rounded-b-[2.25rem] sm:px-8"
+        >
+          <div class="mb-4 flex items-center justify-between text-sm">
+            <span class="font-light text-black/45">Selected tip</span>
+            <span class="text-xl font-light tracking-[-0.06em]">€2.00</span>
+          </div>
           <button
-            class="rounded-full border border-black/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.24em] text-black/70 transition hover:border-black hover:text-black"
+            id="payButton"
+            class="flex w-full items-center justify-center gap-3 rounded-full bg-black px-6 py-4 text-base font-semibold tracking-[-0.02em] text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
             type="button"
           >
-            Secure
+            <span class="text-xl leading-none">Pay</span>
+            <span class="h-5 w-px bg-white/25" aria-hidden="true"></span>
+            <span class="font-light">Apple Pay / Google Pay</span>
           </button>
-        </header>
+        </footer>
+      </div>
 
-        <div class="relative z-10 mt-12 flex flex-col items-center text-center">
-          <div
-            class="flex h-32 w-32 items-center justify-center rounded-full border border-black/10 bg-gradient-to-br from-[#fbfaf7] via-white to-[#e8e2d8] p-2 shadow-soft"
-          >
-            <div
-              class="flex h-full w-full items-center justify-center rounded-full border border-white bg-[#111111] text-4xl font-light tracking-[-0.08em] text-white"
-              aria-label="Worker photo placeholder"
-            >
-              M
-            </div>
-          </div>
-
-          <p class="mt-8 text-xs font-medium uppercase tracking-[0.34em] text-black/45">
-            Thank your host
-          </p>
-          <h1 class="mt-3 font-display text-6xl font-medium leading-none tracking-[-0.06em] text-black">
-            Marco
-          </h1>
-          <p class="mt-4 max-w-[15rem] text-sm font-light leading-6 text-black/55">
-            Hospitality Specialist at Costa Adeje
-          </p>
-        </div>
-
-        <section class="relative z-10 mt-12" aria-labelledby="tip-options">
-          <div class="flex items-end justify-between">
-            <div>
-              <p class="text-xs font-medium uppercase tracking-[0.32em] text-black/45">
-                Select amount
-              </p>
-              <h2 id="tip-options" class="mt-2 text-2xl font-light tracking-[-0.04em]">
-                Leave a tip
-              </h2>
-            </div>
-            <p class="pb-1 text-xs font-light text-black/40">EUR</p>
-          </div>
-
-          <div class="mt-6 grid grid-cols-2 gap-3">
-            <button
-              class="group rounded-[1.35rem] border border-black bg-black px-5 py-6 text-left text-white shadow-soft transition duration-300 hover:-translate-y-0.5 hover:shadow-luxury focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-              type="button"
-              aria-pressed="true"
-            >
-              <span class="block text-xs font-medium uppercase tracking-[0.28em] text-white/50">
-                Classic
-              </span>
-              <span class="mt-5 block text-4xl font-light tracking-[-0.08em]">€2</span>
-            </button>
-
-            <button
-              class="group rounded-[1.35rem] border border-black/10 bg-[#fbfaf8] px-5 py-6 text-left transition duration-300 hover:-translate-y-0.5 hover:border-black hover:bg-white hover:shadow-soft focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-              type="button"
-            >
-              <span class="block text-xs font-medium uppercase tracking-[0.28em] text-black/35">
-                Generous
-              </span>
-              <span class="mt-5 block text-4xl font-light tracking-[-0.08em]">€5</span>
-            </button>
-
-            <button
-              class="group rounded-[1.35rem] border border-black/10 bg-[#fbfaf8] px-5 py-6 text-left transition duration-300 hover:-translate-y-0.5 hover:border-black hover:bg-white hover:shadow-soft focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-              type="button"
-            >
-              <span class="block text-xs font-medium uppercase tracking-[0.28em] text-black/35">
-                Signature
-              </span>
-              <span class="mt-5 block text-4xl font-light tracking-[-0.08em]">€10</span>
-            </button>
-
-            <button
-              class="group rounded-[1.35rem] border border-black/10 bg-white px-5 py-6 text-left transition duration-300 hover:-translate-y-0.5 hover:border-black hover:shadow-soft focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-              type="button"
-            >
-              <span class="block text-xs font-medium uppercase tracking-[0.28em] text-black/35">
-                Bespoke
-              </span>
-              <span class="mt-5 block text-3xl font-light tracking-[-0.06em]">Custom</span>
-            </button>
-          </div>
-        </section>
-
-        <section class="relative z-10 mt-10 rounded-[1.75rem] border border-black/10 bg-[#fbfaf8] p-5">
-          <div class="flex items-start gap-4">
-            <div class="mt-1 h-2 w-2 rounded-full bg-black"></div>
-            <div>
-              <h3 class="text-sm font-medium tracking-[-0.01em]">Private and effortless</h3>
-              <p class="mt-2 text-sm font-light leading-6 text-black/50">
-                Your appreciation goes directly to Marco through a secure wallet checkout.
-              </p>
-            </div>
-          </div>
-        </section>
-      </section>
-
-      <footer
-        class="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-md border-t border-black/10 bg-white/90 px-6 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] pt-4 shadow-[0_-18px_50px_rgba(255,255,255,0.95)] backdrop-blur-xl sm:absolute sm:rounded-b-[2.25rem] sm:px-8"
+      <section
+        id="successScreen"
+        class="pointer-events-none absolute inset-0 flex min-h-screen flex-col items-center justify-center bg-white px-8 py-10 text-center opacity-0 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] [transform:translateY(18px)_scale(0.98)] sm:min-h-[calc(100vh-3rem)]"
+        aria-hidden="true"
+        inert
       >
-        <div class="mb-4 flex items-center justify-between text-sm">
-          <span class="font-light text-black/45">Selected tip</span>
-          <span class="text-xl font-light tracking-[-0.06em]">€2.00</span>
+        <div
+          class="pointer-events-none absolute inset-x-8 top-20 h-56 overflow-hidden"
+          aria-hidden="true"
+        >
+          <span
+            class="confetti-piece absolute top-0 h-3 w-1.5 rounded-full"
+            style="--left: 9%; --fall-x: -26px; --spin: 280deg; --delay: 0s; --color: #d5a542"
+          ></span>
+          <span
+            class="confetti-piece absolute top-0 h-4 w-1 rounded-full"
+            style="--left: 21%; --fall-x: 18px; --spin: -320deg; --delay: 0.12s; --color: #111111"
+          ></span>
+          <span
+            class="confetti-piece absolute top-0 h-2.5 w-2.5 rounded-full"
+            style="--left: 34%; --fall-x: -12px; --spin: 240deg; --delay: 0.24s; --color: #ead9b5"
+          ></span>
+          <span
+            class="confetti-piece absolute top-0 h-4 w-1.5 rounded-full"
+            style="--left: 48%; --fall-x: 28px; --spin: -260deg; --delay: 0.05s; --color: #c59b3f"
+          ></span>
+          <span
+            class="confetti-piece absolute top-0 h-3 w-1 rounded-full"
+            style="--left: 62%; --fall-x: -20px; --spin: 300deg; --delay: 0.18s; --color: #111111"
+          ></span>
+          <span
+            class="confetti-piece absolute top-0 h-2.5 w-2 rounded-full"
+            style="--left: 76%; --fall-x: 14px; --spin: -280deg; --delay: 0.3s; --color: #f2e6cf"
+          ></span>
+          <span
+            class="confetti-piece absolute top-0 h-4 w-1.5 rounded-full"
+            style="--left: 89%; --fall-x: -18px; --spin: 330deg; --delay: 0.1s; --color: #d5a542"
+          ></span>
         </div>
+
+        <div class="relative z-10 flex w-full flex-1 flex-col items-center justify-center">
+          <div
+            class="flex h-28 w-28 items-center justify-center rounded-full border border-[#d5a542]/25 bg-[#fffaf0] shadow-[0_22px_60px_rgba(213,165,66,0.22)]"
+          >
+            <svg
+              class="h-14 w-14 text-[#c59b3f]"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M5 12.5L9.25 16.75L19.5 6.5"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+
+          <p class="mt-10 text-xs font-medium uppercase tracking-[0.36em] text-[#a47d2f]">
+            Success
+          </p>
+          <h2 class="mt-4 font-display text-6xl font-medium leading-none tracking-[-0.06em]">
+            Thank you
+          </h2>
+          <p class="mt-5 max-w-xs text-base font-light leading-7 text-black/55">
+            Marco appreciates your Tip.
+          </p>
+        </div>
+
         <button
-          class="flex w-full items-center justify-center gap-3 rounded-full bg-black px-6 py-4 text-base font-semibold tracking-[-0.02em] text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+          id="closeSuccess"
+          class="relative z-10 mb-[calc(env(safe-area-inset-bottom)+0.25rem)] flex w-full items-center justify-center rounded-full bg-black px-6 py-4 text-base font-semibold tracking-[-0.02em] text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
           type="button"
         >
-          <span class="text-xl leading-none">Pay</span>
-          <span class="h-5 w-px bg-white/25" aria-hidden="true"></span>
-          <span class="font-light">Apple Pay / Google Pay</span>
+          Close
         </button>
-      </footer>
+      </section>
     </main>
+
+    <script>
+      const app = document.getElementById('tipApp');
+      const tippingScreen = document.getElementById('tippingScreen');
+      const payButton = document.getElementById('payButton');
+      const closeSuccess = document.getElementById('closeSuccess');
+      const successScreen = document.getElementById('successScreen');
+
+      payButton.addEventListener('click', () => {
+        app.classList.add('success-active');
+        successScreen.removeAttribute('inert');
+        successScreen.setAttribute('aria-hidden', 'false');
+        tippingScreen.setAttribute('inert', '');
+        window.setTimeout(() => closeSuccess.focus(), 450);
+      });
+
+      closeSuccess.addEventListener('click', () => {
+        app.classList.remove('success-active');
+        successScreen.setAttribute('aria-hidden', 'true');
+        successScreen.setAttribute('inert', '');
+        tippingScreen.removeAttribute('inert');
+        payButton.focus();
+      });
+    </script>
   </body>
 </html>
