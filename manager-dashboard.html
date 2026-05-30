@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Lumina Restaurant - Management Portal</title>
+  <title>Restaurant - Management Portal</title>
   <style>
     :root {
       --ink: #0d0d0d;
@@ -439,7 +439,7 @@
     <header class="venue-header">
       <div>
         <p class="eyebrow">Private venue console</p>
-        <h1>Lumina Restaurant - Management Portal</h1>
+        <h1>Restaurant - Management Portal</h1>
       </div>
       <div class="header-meta">
         <span class="status-pill">Mock database online</span>
@@ -537,13 +537,13 @@
     (function () {
       "use strict";
 
-      var STORAGE_KEY = "lumina.tip.mockDatabase.v1";
+      var STORAGE_KEY = "restaurant.tip.mockDatabase.v1";
       var PLATFORM_FEE_RATE = 0.05;
       var DEFAULT_DATABASE = {
         version: 1,
         venue: {
-          id: "lumina-restaurant",
-          name: "Lumina Restaurant",
+          id: "restaurant",
+          name: "Restaurant",
           currency: "USD"
         },
         pools: [
@@ -634,7 +634,7 @@
           var saved = window.localStorage.getItem(STORAGE_KEY);
           return normalizeDatabase(saved ? JSON.parse(saved) : getBlankDatabase());
         } catch (error) {
-          console.warn("Lumina mock database was reset after a read error.", error);
+          console.warn("Restaurant mock database was reset after a read error.", error);
           return getBlankDatabase();
         }
       }
@@ -642,7 +642,7 @@
       function saveDatabase(database) {
         var normalized = normalizeDatabase(database);
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
-        window.dispatchEvent(new CustomEvent("lumina:tip-ledger-updated", { detail: normalized }));
+        window.dispatchEvent(new CustomEvent("restaurant:tip-ledger-updated", { detail: normalized }));
         return normalized;
       }
 
@@ -891,7 +891,7 @@
         var database = loadDatabase();
         var analytics = getVenueAnalytics();
         var rows = [
-          ["Lumina Restaurant - Venue Tax Summary"],
+          ["Restaurant - Venue Tax Summary"],
           ["Generated At", new Date().toISOString()],
           ["Total Venue Tips Collected This Month", analytics.totalTipsFormatted],
           ["Platform Fees (5%)", analytics.platformFeesFormatted],
@@ -926,7 +926,7 @@
         var url = URL.createObjectURL(blob);
         var anchor = document.createElement("a");
         anchor.href = url;
-        anchor.download = "lumina-venue-tax-summary.csv";
+        anchor.download = "restaurant-venue-tax-summary.csv";
         document.body.appendChild(anchor);
         anchor.click();
         anchor.remove();
@@ -1097,7 +1097,7 @@
         }
       });
 
-      window.addEventListener("lumina:tip-ledger-updated", renderDashboard);
+      window.addEventListener("restaurant:tip-ledger-updated", renderDashboard);
 
       ensureDatabase();
       renderDashboard();
