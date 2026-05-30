@@ -253,7 +253,7 @@
               <div>
                 <h3 class="text-sm font-medium tracking-[-0.01em]">Private and effortless</h3>
                 <p class="mt-2 text-sm font-light leading-6 text-black/50">
-                  Your appreciation opens a secure Stripe Payment Link for this standalone demo.
+                  Your appreciation is confirmed instantly in this standalone demo flow.
                 </p>
               </div>
             </div>
@@ -362,12 +362,6 @@
     </main>
 
     <script>
-      const PAYMENT_LINKS = {
-        200: 'https://buy.stripe.com/mock2',
-        500: 'https://buy.stripe.com/mock5',
-        1000: 'https://buy.stripe.com/mock10',
-      };
-
       const app = document.getElementById('tipApp');
       const tippingScreen = document.getElementById('tippingScreen');
       const tipButtons = document.querySelectorAll('[data-tip-button]');
@@ -398,8 +392,8 @@
 
       const setPayLoading = (isLoading) => {
         payButton.disabled = isLoading;
-        payButtonPrimary.textContent = isLoading ? 'Opening' : 'Pay';
-        payButtonSecondary.textContent = isLoading ? 'Stripe Payment Link' : 'Apple Pay / Google Pay';
+        payButtonPrimary.textContent = isLoading ? 'Confirming' : 'Pay';
+        payButtonSecondary.textContent = isLoading ? 'Preparing thank you' : 'Apple Pay / Google Pay';
       };
 
       const setSelectedTip = (cents, type = 'preset') => {
@@ -431,6 +425,7 @@
         successScreen.removeAttribute('inert');
         successScreen.setAttribute('aria-hidden', 'false');
         tippingScreen.setAttribute('inert', '');
+        setPayLoading(false);
         window.setTimeout(() => closeSuccess.focus(), 450);
       };
 
@@ -447,26 +442,24 @@
         payButton.focus();
       };
 
-      const openPaymentLink = () => {
+      const completeDemoPayment = () => {
         if (selectedTipType === 'custom') {
           const customCents = getCustomTipCents();
-          selectedTipDisplay.textContent = customCents ? formatEuro(customCents) : 'Custom';
-          showStatus('This CodePen demo uses mock Stripe Payment Links for €2, €5, and €10. Please choose a preset amount.');
-          customAmount.focus();
-          return;
+
+          if (!customCents) {
+            selectedTipDisplay.textContent = 'Custom';
+            showStatus('Please enter a custom tip amount before continuing.');
+            customAmount.focus();
+            return;
+          }
+
+          selectedTipCents = customCents;
+          selectedTipDisplay.textContent = formatEuro(customCents);
         }
 
-        const paymentLink = PAYMENT_LINKS[selectedTipCents];
-
-        if (!paymentLink) {
-          showStatus('Please choose €2, €5, or €10 to open a mock Stripe Payment Link.');
-          return;
-        }
-
+        showStatus('');
         setPayLoading(true);
-        window.setTimeout(() => {
-          window.location.href = paymentLink;
-        }, 220);
+        window.setTimeout(showSuccessScreen, 420);
       };
 
       tipButtons.forEach((button) => {
@@ -484,7 +477,7 @@
         setSelectedTip(getCustomTipCents(), 'custom');
       });
 
-      payButton.addEventListener('click', openPaymentLink);
+      payButton.addEventListener('click', completeDemoPayment);
       closeSuccess.addEventListener('click', hideSuccessScreen);
 
       if (new URLSearchParams(window.location.search).get('payment') === 'success') {
