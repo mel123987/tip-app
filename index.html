@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tip.</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://js.stripe.com/v3/"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -42,6 +43,47 @@
           opacity: 0;
           transform: translate3d(var(--fall-x), 190px, 0) rotate(var(--spin)) scale(1);
         }
+      }
+
+      .tip-card {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        background: #fbfaf8;
+        color: #000;
+        transition:
+          background 260ms ease,
+          border-color 260ms ease,
+          box-shadow 260ms ease,
+          color 260ms ease,
+          transform 260ms ease;
+      }
+
+      .tip-card:hover,
+      .tip-card:focus-within {
+        border-color: #000;
+        background: #fff;
+        box-shadow: 0 16px 40px rgba(15, 15, 15, 0.08);
+        transform: translateY(-2px);
+      }
+
+      .tip-card.is-selected {
+        border-color: #000;
+        background: #000;
+        color: #fff;
+        box-shadow: 0 16px 40px rgba(15, 15, 15, 0.08);
+      }
+
+      .tip-card.is-selected .tip-meta {
+        color: rgba(255, 255, 255, 0.52);
+      }
+
+      .tip-card.is-selected .custom-input {
+        border-color: rgba(255, 255, 255, 0.22);
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+      }
+
+      .tip-card.is-selected .custom-input::placeholder {
+        color: rgba(255, 255, 255, 0.48);
       }
 
       .success-active #tippingScreen {
@@ -84,7 +126,7 @@
         id="tippingScreen"
         class="flex min-h-screen flex-col transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] sm:min-h-[calc(100vh-3rem)]"
       >
-        <section class="relative flex flex-1 flex-col px-6 pb-36 pt-7 sm:px-8">
+        <section class="relative flex flex-1 flex-col px-6 pb-44 pt-7 sm:px-8">
           <div
             class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_top,rgba(0,0,0,0.08),transparent_58%)]"
             aria-hidden="true"
@@ -140,45 +182,65 @@
 
             <div class="mt-6 grid grid-cols-2 gap-3">
               <button
-                class="group rounded-[1.35rem] border border-black bg-black px-5 py-6 text-left text-white shadow-soft transition duration-300 hover:-translate-y-0.5 hover:shadow-luxury focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                class="tip-card is-selected rounded-[1.35rem] px-5 py-6 text-left focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                 type="button"
+                data-tip-button
+                data-tip-cents="200"
                 aria-pressed="true"
               >
-                <span class="block text-xs font-medium uppercase tracking-[0.28em] text-white/50">
+                <span class="tip-meta block text-xs font-medium uppercase tracking-[0.28em] text-white/50">
                   Classic
                 </span>
                 <span class="mt-5 block text-4xl font-light tracking-[-0.08em]">€2</span>
               </button>
 
               <button
-                class="group rounded-[1.35rem] border border-black/10 bg-[#fbfaf8] px-5 py-6 text-left transition duration-300 hover:-translate-y-0.5 hover:border-black hover:bg-white hover:shadow-soft focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                class="tip-card rounded-[1.35rem] px-5 py-6 text-left focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                 type="button"
+                data-tip-button
+                data-tip-cents="500"
+                aria-pressed="false"
               >
-                <span class="block text-xs font-medium uppercase tracking-[0.28em] text-black/35">
+                <span class="tip-meta block text-xs font-medium uppercase tracking-[0.28em] text-black/35">
                   Generous
                 </span>
                 <span class="mt-5 block text-4xl font-light tracking-[-0.08em]">€5</span>
               </button>
 
               <button
-                class="group rounded-[1.35rem] border border-black/10 bg-[#fbfaf8] px-5 py-6 text-left transition duration-300 hover:-translate-y-0.5 hover:border-black hover:bg-white hover:shadow-soft focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                class="tip-card rounded-[1.35rem] px-5 py-6 text-left focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
                 type="button"
+                data-tip-button
+                data-tip-cents="1000"
+                aria-pressed="false"
               >
-                <span class="block text-xs font-medium uppercase tracking-[0.28em] text-black/35">
+                <span class="tip-meta block text-xs font-medium uppercase tracking-[0.28em] text-black/35">
                   Signature
                 </span>
                 <span class="mt-5 block text-4xl font-light tracking-[-0.08em]">€10</span>
               </button>
 
-              <button
-                class="group rounded-[1.35rem] border border-black/10 bg-white px-5 py-6 text-left transition duration-300 hover:-translate-y-0.5 hover:border-black hover:shadow-soft focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-                type="button"
+              <label
+                id="customTipCard"
+                class="tip-card rounded-[1.35rem] px-5 py-5 text-left focus-within:outline-none focus-within:ring-2 focus-within:ring-black focus-within:ring-offset-2"
               >
-                <span class="block text-xs font-medium uppercase tracking-[0.28em] text-black/35">
+                <span class="tip-meta block text-xs font-medium uppercase tracking-[0.28em] text-black/35">
                   Bespoke
                 </span>
-                <span class="mt-5 block text-3xl font-light tracking-[-0.06em]">Custom</span>
-              </button>
+                <span class="mt-4 flex items-center gap-2 text-3xl font-light tracking-[-0.06em]">
+                  <span>€</span>
+                  <input
+                    id="customAmount"
+                    class="custom-input min-w-0 flex-1 rounded-2xl border border-black/10 bg-white/70 px-3 py-2 text-2xl font-light tracking-[-0.06em] outline-none transition placeholder:text-black/25"
+                    type="number"
+                    min="1"
+                    step="0.5"
+                    inputmode="decimal"
+                    placeholder="Custom"
+                    aria-label="Custom tip amount in euros"
+                  />
+                </span>
+              </label>
             </div>
           </section>
 
@@ -188,7 +250,7 @@
               <div>
                 <h3 class="text-sm font-medium tracking-[-0.01em]">Private and effortless</h3>
                 <p class="mt-2 text-sm font-light leading-6 text-black/50">
-                  Your appreciation goes directly to Marco through a secure wallet checkout.
+                  Your appreciation goes directly to Marco through a secure Stripe Checkout.
                 </p>
               </div>
             </div>
@@ -200,16 +262,17 @@
         >
           <div class="mb-4 flex items-center justify-between text-sm">
             <span class="font-light text-black/45">Selected tip</span>
-            <span class="text-xl font-light tracking-[-0.06em]">€2.00</span>
+            <span id="selectedTipDisplay" class="text-xl font-light tracking-[-0.06em]">€2.00</span>
           </div>
+          <p id="checkoutStatus" class="mb-3 hidden text-sm font-light leading-5 text-red-600" role="alert"></p>
           <button
             id="payButton"
-            class="flex w-full items-center justify-center gap-3 rounded-full bg-black px-6 py-4 text-base font-semibold tracking-[-0.02em] text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#1a1a1a] focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+            class="flex w-full items-center justify-center gap-3 rounded-full bg-black px-6 py-4 text-base font-semibold tracking-[-0.02em] text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#1a1a1a] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
             type="button"
           >
-            <span class="text-xl leading-none">Pay</span>
+            <span id="payButtonPrimary" class="text-xl leading-none">Pay</span>
             <span class="h-5 w-px bg-white/25" aria-hidden="true"></span>
-            <span class="font-light">Apple Pay / Google Pay</span>
+            <span id="payButtonSecondary" class="font-light">Apple Pay / Google Pay</span>
           </button>
         </footer>
       </div>
@@ -296,27 +359,170 @@
     </main>
 
     <script>
+      const STRIPE_PUBLISHABLE_KEY = 'pk_test_REPLACE_WITH_YOUR_STRIPE_PUBLISHABLE_KEY';
+      const CREATE_CHECKOUT_SESSION_ENDPOINT = '/create-checkout-session';
+      const WORKER_NAME = 'Marco';
+      const CURRENCY = 'eur';
+
       const app = document.getElementById('tipApp');
       const tippingScreen = document.getElementById('tippingScreen');
+      const tipButtons = document.querySelectorAll('[data-tip-button]');
+      const customTipCard = document.getElementById('customTipCard');
+      const customAmount = document.getElementById('customAmount');
+      const selectedTipDisplay = document.getElementById('selectedTipDisplay');
+      const checkoutStatus = document.getElementById('checkoutStatus');
       const payButton = document.getElementById('payButton');
+      const payButtonPrimary = document.getElementById('payButtonPrimary');
+      const payButtonSecondary = document.getElementById('payButtonSecondary');
       const closeSuccess = document.getElementById('closeSuccess');
       const successScreen = document.getElementById('successScreen');
 
-      payButton.addEventListener('click', () => {
+      let selectedTipCents = 200;
+      let selectedTipType = 'preset';
+
+      const formatEuro = (cents) =>
+        new Intl.NumberFormat('en-IE', {
+          style: 'currency',
+          currency: 'EUR',
+          minimumFractionDigits: 2,
+        }).format(cents / 100);
+
+      const showStatus = (message) => {
+        checkoutStatus.textContent = message;
+        checkoutStatus.classList.toggle('hidden', !message);
+      };
+
+      const setPayLoading = (isLoading) => {
+        payButton.disabled = isLoading;
+        payButtonPrimary.textContent = isLoading ? 'Processing' : 'Pay';
+        payButtonSecondary.textContent = isLoading ? 'Opening Stripe Checkout' : 'Apple Pay / Google Pay';
+      };
+
+      const setSelectedTip = (cents, type = 'preset') => {
+        selectedTipCents = cents;
+        selectedTipType = type;
+        selectedTipDisplay.textContent = cents ? formatEuro(cents) : 'Custom';
+        showStatus('');
+
+        tipButtons.forEach((button) => {
+          const isSelected = type === 'preset' && Number(button.dataset.tipCents) === cents;
+          button.classList.toggle('is-selected', isSelected);
+          button.setAttribute('aria-pressed', String(isSelected));
+        });
+
+        customTipCard.classList.toggle('is-selected', type === 'custom');
+      };
+
+      const getCustomTipCents = () => {
+        const value = Number(customAmount.value);
+        if (!Number.isFinite(value) || value <= 0) {
+          return null;
+        }
+
+        return Math.round(value * 100);
+      };
+
+      const showSuccessScreen = () => {
         app.classList.add('success-active');
         successScreen.removeAttribute('inert');
         successScreen.setAttribute('aria-hidden', 'false');
         tippingScreen.setAttribute('inert', '');
         window.setTimeout(() => closeSuccess.focus(), 450);
-      });
+      };
 
-      closeSuccess.addEventListener('click', () => {
+      const hideSuccessScreen = () => {
         app.classList.remove('success-active');
         successScreen.setAttribute('aria-hidden', 'true');
         successScreen.setAttribute('inert', '');
         tippingScreen.removeAttribute('inert');
         payButton.focus();
+      };
+
+      const createCheckoutSession = async (amountCents) => {
+        const pageUrl = `${window.location.origin}${window.location.pathname}`;
+        const response = await fetch(CREATE_CHECKOUT_SESSION_ENDPOINT, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            amount: amountCents,
+            currency: CURRENCY,
+            workerName: WORKER_NAME,
+            successUrl: `${pageUrl}?payment=success`,
+            cancelUrl: `${pageUrl}?payment=cancelled`,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Unable to create a Stripe Checkout session.');
+        }
+
+        return response.json();
+      };
+
+      const startStripeCheckout = async () => {
+        const amountCents = selectedTipType === 'custom' ? getCustomTipCents() : selectedTipCents;
+
+        if (!amountCents) {
+          customAmount.focus();
+          showStatus('Please enter a custom tip amount before continuing.');
+          return;
+        }
+
+        if (STRIPE_PUBLISHABLE_KEY.includes('REPLACE_WITH')) {
+          showStatus('Add your Stripe publishable key in STRIPE_PUBLISHABLE_KEY before taking payments.');
+          return;
+        }
+
+        const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+        setPayLoading(true);
+        showStatus('');
+
+        try {
+          const session = await createCheckoutSession(amountCents);
+
+          if (session.url) {
+            window.location.assign(session.url);
+            return;
+          }
+
+          if (!session.sessionId) {
+            throw new Error('The Checkout Session response must include a sessionId or url.');
+          }
+
+          const { error } = await stripe.redirectToCheckout({ sessionId: session.sessionId });
+
+          if (error) {
+            throw error;
+          }
+        } catch (error) {
+          showStatus(error.message || 'Something went wrong opening Stripe Checkout.');
+          setPayLoading(false);
+        }
+      };
+
+      tipButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          customAmount.value = '';
+          setSelectedTip(Number(button.dataset.tipCents));
+        });
       });
+
+      customAmount.addEventListener('focus', () => {
+        setSelectedTip(getCustomTipCents(), 'custom');
+      });
+
+      customAmount.addEventListener('input', () => {
+        setSelectedTip(getCustomTipCents(), 'custom');
+      });
+
+      payButton.addEventListener('click', startStripeCheckout);
+      closeSuccess.addEventListener('click', hideSuccessScreen);
+
+      if (new URLSearchParams(window.location.search).get('payment') === 'success') {
+        showSuccessScreen();
+      }
     </script>
   </body>
 </html>
