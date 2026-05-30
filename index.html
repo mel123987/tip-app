@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tip.</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://js.stripe.com/v3/"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -254,7 +253,7 @@
               <div>
                 <h3 class="text-sm font-medium tracking-[-0.01em]">Private and effortless</h3>
                 <p class="mt-2 text-sm font-light leading-6 text-black/50">
-                  Your appreciation goes directly to Marco through a secure Stripe Checkout.
+                  Your appreciation opens a secure Stripe Payment Link for this standalone demo.
                 </p>
               </div>
             </div>
@@ -363,10 +362,11 @@
     </main>
 
     <script>
-      const STRIPE_PUBLISHABLE_KEY = 'pk_test_REPLACE_WITH_YOUR_STRIPE_PUBLISHABLE_KEY';
-      const CREATE_CHECKOUT_SESSION_ENDPOINT = '/create-checkout-session';
-      const WORKER_NAME = 'Marco';
-      const CURRENCY = 'eur';
+      const PAYMENT_LINKS = {
+        200: 'https://buy.stripe.com/mock2',
+        500: 'https://buy.stripe.com/mock5',
+        1000: 'https://buy.stripe.com/mock10',
+      };
 
       const app = document.getElementById('tipApp');
       const tippingScreen = document.getElementById('tippingScreen');
@@ -398,8 +398,8 @@
 
       const setPayLoading = (isLoading) => {
         payButton.disabled = isLoading;
-        payButtonPrimary.textContent = isLoading ? 'Processing' : 'Pay';
-        payButtonSecondary.textContent = isLoading ? 'Opening Stripe Checkout' : 'Apple Pay / Google Pay';
+        payButtonPrimary.textContent = isLoading ? 'Opening' : 'Pay';
+        payButtonSecondary.textContent = isLoading ? 'Stripe Payment Link' : 'Apple Pay / Google Pay';
       };
 
       const setSelectedTip = (cents, type = 'preset') => {
@@ -439,71 +439,34 @@
         successScreen.setAttribute('aria-hidden', 'true');
         successScreen.setAttribute('inert', '');
         tippingScreen.removeAttribute('inert');
+
+        if (window.location.search.includes('payment=success')) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
         payButton.focus();
       };
 
-      const createCheckoutSession = async (amountCents) => {
-        const pageUrl = `${window.location.origin}${window.location.pathname}`;
-        const response = await fetch(CREATE_CHECKOUT_SESSION_ENDPOINT, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            amount: amountCents,
-            currency: CURRENCY,
-            workerName: WORKER_NAME,
-            successUrl: `${pageUrl}?payment=success`,
-            cancelUrl: `${pageUrl}?payment=cancelled`,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Unable to create a Stripe Checkout session.');
-        }
-
-        return response.json();
-      };
-
-      const startStripeCheckout = async () => {
-        const amountCents = selectedTipType === 'custom' ? getCustomTipCents() : selectedTipCents;
-
-        if (!amountCents) {
+      const openPaymentLink = () => {
+        if (selectedTipType === 'custom') {
+          const customCents = getCustomTipCents();
+          selectedTipDisplay.textContent = customCents ? formatEuro(customCents) : 'Custom';
+          showStatus('This CodePen demo uses mock Stripe Payment Links for €2, €5, and €10. Please choose a preset amount.');
           customAmount.focus();
-          showStatus('Please enter a custom tip amount before continuing.');
           return;
         }
 
-        if (STRIPE_PUBLISHABLE_KEY.includes('REPLACE_WITH')) {
-          showStatus('Add your Stripe publishable key in STRIPE_PUBLISHABLE_KEY before taking payments.');
+        const paymentLink = PAYMENT_LINKS[selectedTipCents];
+
+        if (!paymentLink) {
+          showStatus('Please choose €2, €5, or €10 to open a mock Stripe Payment Link.');
           return;
         }
 
-        const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
         setPayLoading(true);
-        showStatus('');
-
-        try {
-          const session = await createCheckoutSession(amountCents);
-
-          if (session.url) {
-            window.location.assign(session.url);
-            return;
-          }
-
-          if (!session.sessionId) {
-            throw new Error('The Checkout Session response must include a sessionId or url.');
-          }
-
-          const { error } = await stripe.redirectToCheckout({ sessionId: session.sessionId });
-
-          if (error) {
-            throw error;
-          }
-        } catch (error) {
-          showStatus(error.message || 'Something went wrong opening Stripe Checkout.');
-          setPayLoading(false);
-        }
+        window.setTimeout(() => {
+          window.location.href = paymentLink;
+        }, 220);
       };
 
       tipButtons.forEach((button) => {
@@ -521,7 +484,7 @@
         setSelectedTip(getCustomTipCents(), 'custom');
       });
 
-      payButton.addEventListener('click', startStripeCheckout);
+      payButton.addEventListener('click', openPaymentLink);
       closeSuccess.addEventListener('click', hideSuccessScreen);
 
       if (new URLSearchParams(window.location.search).get('payment') === 'success') {
