@@ -1,0 +1,1099 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Restaurant - Management Portal</title>
+  <style>
+    :root {
+      --ink: #0d0d0d;
+      --muted: #686868;
+      --line: #dedbd4;
+      --paper: #fbfaf7;
+      --panel: #ffffff;
+      --champagne: #c8aa6e;
+      --champagne-dark: #8f7139;
+      --soft: #f4f1eb;
+      --danger: #9e2f26;
+      --shadow: 0 28px 80px rgba(13, 13, 13, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(135deg, rgba(200, 170, 110, 0.08), transparent 32%),
+        var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: -0.01em;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 48px 0 64px;
+    }
+
+    .venue-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      padding: 34px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--champagne-dark);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.2rem, 5vw, 4.8rem);
+      font-weight: 400;
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+    }
+
+    .header-meta {
+      display: grid;
+      gap: 10px;
+      min-width: 240px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      text-align: right;
+    }
+
+    .status-pill {
+      justify-self: end;
+      width: fit-content;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--ink);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 22px;
+      margin-top: 22px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 48px rgba(13, 13, 13, 0.05);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      padding: 24px 26px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .card-subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .card-body {
+      padding: 24px 26px 26px;
+    }
+
+    .button {
+      appearance: none;
+      border: 1px solid var(--ink);
+      background: var(--ink);
+      color: white;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      font: inherit;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+    }
+
+    .button:hover {
+      background: var(--champagne-dark);
+      border-color: var(--champagne-dark);
+      transform: translateY(-1px);
+    }
+
+    .button.secondary {
+      background: transparent;
+      color: var(--ink);
+    }
+
+    .button.secondary:hover {
+      background: var(--ink);
+      color: white;
+      border-color: var(--ink);
+    }
+
+    .pool-list,
+    .staff-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .pool-row,
+    .staff-row {
+      display: grid;
+      gap: 16px;
+      align-items: center;
+      min-height: 74px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .pool-row {
+      grid-template-columns: 1fr auto;
+    }
+
+    .staff-row {
+      grid-template-columns: 1.1fr 0.8fr auto;
+    }
+
+    .pool-row:last-child,
+    .staff-row:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .item-title {
+      margin: 0 0 6px;
+      font-size: 1rem;
+      font-weight: 750;
+    }
+
+    .item-meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .amount {
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .analytics-card {
+      position: relative;
+      overflow: hidden;
+      background: var(--ink);
+      color: white;
+    }
+
+    .analytics-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -12% -42% auto;
+      width: 270px;
+      height: 270px;
+      border: 1px solid rgba(200, 170, 110, 0.34);
+      border-radius: 50%;
+    }
+
+    .analytics-card .card-header {
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    .analytics-card .card-subtitle,
+    .analytics-card .eyebrow {
+      color: rgba(255, 255, 255, 0.66);
+    }
+
+    .metric-stack {
+      display: grid;
+      gap: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .metric {
+      display: grid;
+      gap: 8px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .metric:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .metric-label {
+      color: rgba(255, 255, 255, 0.66);
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .metric-value {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.3rem, 4vw, 4rem);
+      font-weight: 400;
+      letter-spacing: -0.06em;
+      line-height: 0.95;
+    }
+
+    .export-panel {
+      display: grid;
+      gap: 18px;
+      margin-top: 22px;
+      padding: 28px;
+      background:
+        linear-gradient(120deg, rgba(200, 170, 110, 0.18), transparent 45%),
+        var(--panel);
+      border: 1px solid var(--line);
+    }
+
+    .export-panel p {
+      max-width: 620px;
+      margin-bottom: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .export-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .empty-state {
+      padding: 24px;
+      border: 1px dashed var(--line);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    dialog {
+      width: min(520px, calc(100% - 32px));
+      padding: 0;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    dialog::backdrop {
+      background: rgba(13, 13, 13, 0.36);
+      backdrop-filter: blur(8px);
+    }
+
+    .dialog-inner {
+      padding: 28px;
+      background: var(--paper);
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      margin: 18px 0;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--ink);
+      padding: 14px 12px;
+      font: inherit;
+      font-size: 1rem;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .worker-picker {
+      display: grid;
+      gap: 10px;
+      max-height: 190px;
+      overflow: auto;
+      padding: 12px;
+      border: 1px solid var(--line);
+      background: white;
+    }
+
+    .check-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      letter-spacing: 0;
+      text-transform: none;
+      font-weight: 500;
+    }
+
+    .check-row input {
+      width: auto;
+    }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .notice {
+      margin: 14px 0 0;
+      color: var(--danger);
+      font-size: 0.88rem;
+      min-height: 1.2em;
+    }
+
+    @media (max-width: 860px) {
+      .venue-header,
+      .grid,
+      .pool-row,
+      .staff-row {
+        grid-template-columns: 1fr;
+      }
+
+      .header-meta {
+        text-align: left;
+      }
+
+      .status-pill {
+        justify-self: start;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .button,
+      dialog,
+      .export-panel p,
+      .export-actions {
+        display: none !important;
+      }
+
+      .shell {
+        width: 100%;
+        padding: 0;
+      }
+
+      .card,
+      .venue-header,
+      .export-panel {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="venue-header">
+      <div>
+        <p class="eyebrow">Private venue console</p>
+        <h1>Restaurant - Management Portal</h1>
+      </div>
+      <div class="header-meta">
+        <span class="status-pill">Mock database online</span>
+        <span id="lastSync">Awaiting ledger sync</span>
+      </div>
+    </header>
+
+    <section class="grid" aria-label="Management dashboard">
+      <article class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Group Pool Management</h2>
+            <p class="card-subtitle">Active tipping pools by service area.</p>
+          </div>
+          <button class="button" id="openPoolDialog" type="button">Create New Tipping Pool Group</button>
+        </div>
+        <div class="card-body">
+          <div class="pool-list" id="poolList"></div>
+        </div>
+      </article>
+
+      <article class="card analytics-card">
+        <div class="card-header">
+          <div>
+            <p class="eyebrow">Venue Analytics</p>
+            <h2 class="card-title">Current Month</h2>
+            <p class="card-subtitle">Live totals from the shared localStorage ledger.</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="metric-stack">
+            <div class="metric">
+              <span class="metric-label">Total Venue Tips Collected This Month</span>
+              <span class="metric-value" id="totalTips">$0.00</span>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top: 22px;">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Staff Overview</h2>
+          <p class="card-subtitle">Registered workers, assigned groups, and total net earnings.</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="staff-list" id="staffList"></div>
+      </div>
+    </section>
+
+    <section class="export-panel" aria-label="Financial export">
+      <div>
+        <p class="eyebrow">Financial Export</p>
+        <h2 class="card-title">Venue tax summary</h2>
+        <p>
+          Export the current ledger into a CSV tax summary or use the print dialog to save a PDF.
+          Both outputs are generated from the same mock database used by customer, group, worker,
+          and manager screens.
+        </p>
+      </div>
+      <div class="export-actions">
+        <button class="button" id="exportSummary" type="button">Export Venue Tax Summary (PDF/CSV)</button>
+        <button class="button secondary" id="seedPayment" type="button">Simulate Guest Payment</button>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="poolDialog" aria-labelledby="poolDialogTitle">
+    <form class="dialog-inner" id="poolForm" method="dialog">
+      <p class="eyebrow">New pool</p>
+      <h2 id="poolDialogTitle">Create tipping pool group</h2>
+      <label>
+        Group name
+        <input id="poolName" name="poolName" placeholder="Chef's Counter" autocomplete="off" required>
+      </label>
+      <label>
+        Assign workers
+        <div class="worker-picker" id="workerPicker"></div>
+      </label>
+      <p class="notice" id="poolNotice"></p>
+      <div class="dialog-actions">
+        <button class="button secondary" id="cancelPool" type="button">Cancel</button>
+        <button class="button" type="submit">Create Pool</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var STORAGE_KEY = "restaurant.tip.mockDatabase.v1";
+      var PLATFORM_FEE_RATE = 0.05;
+      var DEFAULT_DATABASE = {
+        version: 1,
+        venue: {
+          id: "restaurant",
+          name: "Restaurant",
+          currency: "USD"
+        },
+        pools: [
+          {
+            id: "terrace-bar",
+            name: "Terrace Bar",
+            workerIds: ["ava-laurent", "marco-vale", "nina-sato", "theo-martin"],
+            active: true,
+            createdAt: "2026-05-01T12:00:00.000Z"
+          },
+          {
+            id: "main-dining",
+            name: "Main Dining",
+            workerIds: [
+              "elena-reed",
+              "jon-bell",
+              "maya-chen",
+              "omar-kline",
+              "priya-shah",
+              "ren-ito",
+              "sofia-cross",
+              "wes-hart"
+            ],
+            active: true,
+            createdAt: "2026-05-01T12:00:00.000Z"
+          }
+        ],
+        workers: [
+          { id: "ava-laurent", name: "Ava Laurent", role: "Bartender", groupId: "terrace-bar", active: true },
+          { id: "marco-vale", name: "Marco Vale", role: "Bartender", groupId: "terrace-bar", active: true },
+          { id: "nina-sato", name: "Nina Sato", role: "Barback", groupId: "terrace-bar", active: true },
+          { id: "theo-martin", name: "Theo Martin", role: "Server", groupId: "terrace-bar", active: true },
+          { id: "elena-reed", name: "Elena Reed", role: "Captain", groupId: "main-dining", active: true },
+          { id: "jon-bell", name: "Jon Bell", role: "Server", groupId: "main-dining", active: true },
+          { id: "maya-chen", name: "Maya Chen", role: "Server", groupId: "main-dining", active: true },
+          { id: "omar-kline", name: "Omar Kline", role: "Sommelier", groupId: "main-dining", active: true },
+          { id: "priya-shah", name: "Priya Shah", role: "Server", groupId: "main-dining", active: true },
+          { id: "ren-ito", name: "Ren Ito", role: "Runner", groupId: "main-dining", active: true },
+          { id: "sofia-cross", name: "Sofia Cross", role: "Host", groupId: "main-dining", active: true },
+          { id: "wes-hart", name: "Wes Hart", role: "Runner", groupId: "main-dining", active: true }
+        ],
+        ledger: []
+      };
+
+      function deepClone(value) {
+        return JSON.parse(JSON.stringify(value));
+      }
+
+      function getBlankDatabase() {
+        return deepClone(DEFAULT_DATABASE);
+      }
+
+      function normalizeDatabase(database) {
+        var normalized = database && typeof database === "object" ? database : {};
+        normalized.version = 1;
+        normalized.venue = normalized.venue || deepClone(DEFAULT_DATABASE.venue);
+        normalized.pools = Array.isArray(normalized.pools) ? normalized.pools : deepClone(DEFAULT_DATABASE.pools);
+        normalized.workers = Array.isArray(normalized.workers) ? normalized.workers : deepClone(DEFAULT_DATABASE.workers);
+        normalized.ledger = Array.isArray(normalized.ledger) ? normalized.ledger : [];
+
+        normalized.ledger = normalized.ledger
+          .filter(function (entry) {
+            return entry && entry.status !== "void" && Number.isFinite(Number(entry.amountCents));
+          })
+          .map(function (entry) {
+            var amountCents = Math.max(0, Math.round(Number(entry.amountCents)));
+            var platformFeeCents = Number.isFinite(Number(entry.platformFeeCents))
+              ? Math.round(Number(entry.platformFeeCents))
+              : Math.round(amountCents * PLATFORM_FEE_RATE);
+
+            return Object.assign({}, entry, {
+              amountCents: amountCents,
+              platformFeeCents: platformFeeCents,
+              netAmountCents: Number.isFinite(Number(entry.netAmountCents))
+                ? Math.round(Number(entry.netAmountCents))
+                : amountCents - platformFeeCents,
+              currency: entry.currency || normalized.venue.currency || "USD",
+              paidAt: entry.paidAt || new Date().toISOString(),
+              status: entry.status || "succeeded"
+            });
+          });
+
+        return normalized;
+      }
+
+      function loadDatabase() {
+        try {
+          var saved = window.localStorage.getItem(STORAGE_KEY);
+          return normalizeDatabase(saved ? JSON.parse(saved) : getBlankDatabase());
+        } catch (error) {
+          console.warn("Restaurant mock database was reset after a read error.", error);
+          return getBlankDatabase();
+        }
+      }
+
+      function saveDatabase(database) {
+        var normalized = normalizeDatabase(database);
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+        window.dispatchEvent(new CustomEvent("restaurant:tip-ledger-updated", { detail: normalized }));
+        return normalized;
+      }
+
+      function ensureDatabase() {
+        try {
+          var saved = window.localStorage.getItem(STORAGE_KEY);
+          var normalized = normalizeDatabase(saved ? JSON.parse(saved) : getBlankDatabase());
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+          return normalized;
+        } catch (error) {
+          var freshDatabase = getBlankDatabase();
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(freshDatabase));
+          return freshDatabase;
+        }
+      }
+
+      function getDatabase() {
+        return loadDatabase();
+      }
+
+      function resetDatabase() {
+        return saveDatabase(getBlankDatabase());
+      }
+
+      function toCents(amount) {
+        var numeric = Number(String(amount).replace(/[^0-9.-]/g, ""));
+        if (!Number.isFinite(numeric) || numeric < 0) {
+          return 0;
+        }
+
+        return Math.round(numeric * 100);
+      }
+
+      function normalizeCents(amountCents) {
+        var numeric = Number(amountCents);
+        if (!Number.isFinite(numeric) || numeric < 0) {
+          return 0;
+        }
+
+        return Math.round(numeric);
+      }
+
+      function formatMoney(cents, currency) {
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: currency || "USD"
+        }).format((Number(cents) || 0) / 100);
+      }
+
+      function slugify(value) {
+        return String(value || "pool")
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .slice(0, 48) || "pool";
+      }
+
+      function uniqueId(prefix) {
+        if (window.crypto && typeof window.crypto.randomUUID === "function") {
+          return prefix + "-" + window.crypto.randomUUID();
+        }
+
+        return prefix + "-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
+      }
+
+      function findPool(database, poolId) {
+        return database.pools.find(function (pool) {
+          return pool.id === poolId;
+        });
+      }
+
+      function findWorker(database, workerId) {
+        return database.workers.find(function (worker) {
+          return worker.id === workerId;
+        });
+      }
+
+      function getPoolWorkers(database, poolId) {
+        var pool = findPool(database, poolId) || { workerIds: [] };
+        return database.workers.filter(function (worker) {
+          return worker.groupId === poolId || pool.workerIds.indexOf(worker.id) !== -1;
+        });
+      }
+
+      function createTippingPool(name, workerIds) {
+        var database = loadDatabase();
+        var selectedWorkerIds = Array.isArray(workerIds) ? workerIds : [];
+        var baseId = slugify(name);
+        var id = baseId;
+        var suffix = 2;
+
+        while (findPool(database, id)) {
+          id = baseId + "-" + suffix;
+          suffix += 1;
+        }
+
+        database.pools = database.pools.map(function (pool) {
+          return Object.assign({}, pool, {
+            workerIds: pool.workerIds.filter(function (workerId) {
+              return selectedWorkerIds.indexOf(workerId) === -1;
+            })
+          });
+        });
+
+        database.pools.push({
+          id: id,
+          name: String(name || "Untitled Pool").trim(),
+          workerIds: selectedWorkerIds,
+          active: true,
+          createdAt: new Date().toISOString()
+        });
+
+        database.workers = database.workers.map(function (worker) {
+          if (selectedWorkerIds.indexOf(worker.id) === -1) {
+            return worker;
+          }
+
+          return Object.assign({}, worker, { groupId: id });
+        });
+
+        return saveDatabase(database);
+      }
+
+      function recordPayment(payment) {
+        var database = loadDatabase();
+        var amountCents = payment && payment.amountCents != null
+          ? normalizeCents(payment.amountCents)
+          : toCents(payment && payment.amount);
+
+        if (amountCents <= 0) {
+          throw new Error("Payment amount must be greater than zero.");
+        }
+
+        var poolId = payment.poolId || payment.groupId || null;
+        var workerId = payment.workerId || null;
+        var worker = workerId ? findWorker(database, workerId) : null;
+
+        if (!poolId && worker) {
+          poolId = worker.groupId || null;
+        }
+
+        var poolWorkers = poolId ? getPoolWorkers(database, poolId) : [];
+        var platformFeeCents = Math.round(amountCents * PLATFORM_FEE_RATE);
+        var netAmountCents = amountCents - platformFeeCents;
+        var splitWorkerIds = workerId
+          ? [workerId]
+          : poolWorkers.map(function (poolWorker) { return poolWorker.id; });
+
+        database.ledger.push({
+          id: uniqueId("tip"),
+          source: payment.source || "customer",
+          amountCents: amountCents,
+          platformFeeCents: platformFeeCents,
+          netAmountCents: netAmountCents,
+          currency: payment.currency || database.venue.currency || "USD",
+          workerId: workerId,
+          poolId: poolId,
+          splitWorkerIds: splitWorkerIds,
+          note: payment.note || "",
+          status: "succeeded",
+          paidAt: payment.paidAt || new Date().toISOString()
+        });
+
+        return saveDatabase(database);
+      }
+
+      function getWorkerEarnings(workerId) {
+        var database = loadDatabase();
+        var cents = database.ledger.reduce(function (total, entry) {
+          if (entry.status !== "succeeded") {
+            return total;
+          }
+
+          if (entry.workerId === workerId) {
+            return total + entry.netAmountCents;
+          }
+
+          if (Array.isArray(entry.splitWorkerIds) && entry.splitWorkerIds.indexOf(workerId) !== -1) {
+            return total + Math.floor(entry.netAmountCents / entry.splitWorkerIds.length);
+          }
+
+          return total;
+        }, 0);
+
+        return {
+          workerId: workerId,
+          earningsCents: cents,
+          formatted: formatMoney(cents, database.venue.currency)
+        };
+      }
+
+      function getWorkerDashboardBalance(workerId) {
+        return getWorkerEarnings(workerId);
+      }
+
+      function isCurrentMonth(isoDate) {
+        var date = new Date(isoDate);
+        var now = new Date();
+        return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth();
+      }
+
+      function getVenueAnalytics() {
+        var database = loadDatabase();
+        var monthlyEntries = database.ledger.filter(function (entry) {
+          return entry.status === "succeeded" && isCurrentMonth(entry.paidAt);
+        });
+
+        var totalTipsCents = monthlyEntries.reduce(function (sum, entry) {
+          return sum + entry.amountCents;
+        }, 0);
+
+        var platformFeesCents = monthlyEntries.reduce(function (sum, entry) {
+          return sum + entry.platformFeeCents;
+        }, 0);
+
+        return {
+          totalTipsCents: totalTipsCents,
+          platformFeesCents: platformFeesCents,
+          netTipsCents: totalTipsCents - platformFeesCents,
+          totalTipsFormatted: formatMoney(totalTipsCents, database.venue.currency),
+          platformFeesFormatted: formatMoney(platformFeesCents, database.venue.currency),
+          netTipsFormatted: formatMoney(totalTipsCents - platformFeesCents, database.venue.currency),
+          entries: monthlyEntries
+        };
+      }
+
+      function getStaffOverview() {
+        var database = loadDatabase();
+        return database.workers.map(function (worker) {
+          var group = findPool(database, worker.groupId);
+          var earnings = getWorkerEarnings(worker.id);
+
+          return {
+            id: worker.id,
+            name: worker.name,
+            role: worker.role,
+            groupName: group ? group.name : "Unassigned",
+            earningsCents: earnings.earningsCents,
+            earningsFormatted: earnings.formatted
+          };
+        });
+      }
+
+      function exportVenueTaxSummaryCsv() {
+        var database = loadDatabase();
+        var analytics = getVenueAnalytics();
+        var rows = [
+          ["Restaurant - Venue Tax Summary"],
+          ["Generated At", new Date().toISOString()],
+          ["Total Venue Tips Collected This Month", analytics.totalTipsFormatted],
+          [],
+          ["Ledger ID", "Paid At", "Source", "Pool", "Worker", "Total Tips", "Note"]
+        ];
+
+        analytics.entries.forEach(function (entry) {
+          var pool = entry.poolId ? findPool(database, entry.poolId) : null;
+          var worker = entry.workerId ? findWorker(database, entry.workerId) : null;
+
+          rows.push([
+            entry.id,
+            entry.paidAt,
+            entry.source,
+            pool ? pool.name : "",
+            worker ? worker.name : "",
+            formatMoney(entry.amountCents, entry.currency),
+            entry.note || ""
+          ]);
+        });
+
+        var csv = rows.map(function (row) {
+          return row.map(function (cell) {
+            return '"' + String(cell == null ? "" : cell).replace(/"/g, '""') + '"';
+          }).join(",");
+        }).join("\n");
+
+        var blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+        var url = URL.createObjectURL(blob);
+        var anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = "restaurant-venue-tax-summary.csv";
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      window.TipMockDB = {
+        storageKey: STORAGE_KEY,
+        platformFeeRate: PLATFORM_FEE_RATE,
+        loadDatabase: loadDatabase,
+        saveDatabase: saveDatabase,
+        getDatabase: getDatabase,
+        resetDatabase: resetDatabase,
+        recordPayment: recordPayment,
+        createTippingPool: createTippingPool,
+        getWorkerEarnings: getWorkerEarnings,
+        getWorkerDashboardBalance: getWorkerDashboardBalance,
+        getVenueAnalytics: getVenueAnalytics,
+        getStaffOverview: getStaffOverview,
+        exportVenueTaxSummaryCsv: exportVenueTaxSummaryCsv,
+        formatMoney: formatMoney
+      };
+
+      function renderPools(database) {
+        var poolList = document.getElementById("poolList");
+        var activePools = database.pools.filter(function (pool) {
+          return pool.active;
+        });
+
+        if (!activePools.length) {
+          poolList.innerHTML = '<div class="empty-state">No active tipping pools yet.</div>';
+          return;
+        }
+
+        poolList.innerHTML = activePools.map(function (pool) {
+          var staffCount = getPoolWorkers(database, pool.id).length || pool.workerIds.length;
+          return [
+            '<div class="pool-row">',
+            "  <div>",
+            '    <p class="item-title">' + escapeHtml(pool.name) + " (" + staffCount + " staff)</p>",
+            '    <p class="item-meta">Pool ID: ' + escapeHtml(pool.id) + "</p>",
+            "  </div>",
+            '  <span class="status-pill">Active</span>',
+            "</div>"
+          ].join("");
+        }).join("");
+      }
+
+      function renderStaff() {
+        var staffList = document.getElementById("staffList");
+        var staff = getStaffOverview();
+
+        if (!staff.length) {
+          staffList.innerHTML = '<div class="empty-state">No registered workers yet.</div>';
+          return;
+        }
+
+        staffList.innerHTML = staff.map(function (worker) {
+          return [
+            '<div class="staff-row">',
+            "  <div>",
+            '    <p class="item-title">' + escapeHtml(worker.name) + "</p>",
+            '    <p class="item-meta">' + escapeHtml(worker.role) + "</p>",
+            "  </div>",
+            '  <p class="item-meta">' + escapeHtml(worker.groupName) + "</p>",
+            '  <span class="amount">' + worker.earningsFormatted + "</span>",
+            "</div>"
+          ].join("");
+        }).join("");
+      }
+
+      function renderAnalytics() {
+        var analytics = getVenueAnalytics();
+        document.getElementById("totalTips").textContent = analytics.totalTipsFormatted;
+      }
+
+      function renderWorkerPicker(database) {
+        var picker = document.getElementById("workerPicker");
+        picker.innerHTML = database.workers.map(function (worker) {
+          return [
+            '<label class="check-row">',
+            '  <input type="checkbox" name="workerIds" value="' + escapeHtml(worker.id) + '">',
+            "  <span>" + escapeHtml(worker.name) + " - " + escapeHtml(worker.role) + "</span>",
+            "</label>"
+          ].join("");
+        }).join("");
+      }
+
+      function renderLastSync(database) {
+        var lastEntry = database.ledger.slice().sort(function (a, b) {
+          return new Date(b.paidAt).getTime() - new Date(a.paidAt).getTime();
+        })[0];
+
+        document.getElementById("lastSync").textContent = lastEntry
+          ? "Last payment synced " + new Date(lastEntry.paidAt).toLocaleString()
+          : "No payments recorded yet";
+      }
+
+      function renderDashboard() {
+        var database = loadDatabase();
+        renderPools(database);
+        renderStaff();
+        renderAnalytics();
+        renderWorkerPicker(database);
+        renderLastSync(database);
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      document.getElementById("openPoolDialog").addEventListener("click", function () {
+        document.getElementById("poolNotice").textContent = "";
+        document.getElementById("poolName").value = "";
+        document.querySelectorAll('input[name="workerIds"]').forEach(function (input) {
+          input.checked = false;
+        });
+        document.getElementById("poolDialog").showModal();
+      });
+
+      document.getElementById("cancelPool").addEventListener("click", function () {
+        document.getElementById("poolDialog").close();
+      });
+
+      document.getElementById("poolForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+        var name = document.getElementById("poolName").value.trim();
+        var selectedWorkers = Array.from(document.querySelectorAll('input[name="workerIds"]:checked')).map(function (input) {
+          return input.value;
+        });
+
+        if (!name) {
+          document.getElementById("poolNotice").textContent = "Enter a group name before creating the pool.";
+          return;
+        }
+
+        createTippingPool(name, selectedWorkers);
+        document.getElementById("poolDialog").close();
+        renderDashboard();
+      });
+
+      document.getElementById("exportSummary").addEventListener("click", function () {
+        exportVenueTaxSummaryCsv();
+        window.setTimeout(function () {
+          window.print();
+        }, 250);
+      });
+
+      document.getElementById("seedPayment").addEventListener("click", function () {
+        recordPayment({
+          amount: 42,
+          poolId: "terrace-bar",
+          source: "manager-demo",
+          note: "Demo payment generated from Manager Dashboard"
+        });
+        renderDashboard();
+      });
+
+      window.addEventListener("storage", function (event) {
+        if (event.key === STORAGE_KEY) {
+          renderDashboard();
+        }
+      });
+
+      window.addEventListener("restaurant:tip-ledger-updated", renderDashboard);
+
+      ensureDatabase();
+      renderDashboard();
+    })();
+  </script>
+</body>
+</html>
