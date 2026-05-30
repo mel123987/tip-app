@@ -475,10 +475,6 @@
               <span class="metric-label">Total Venue Tips Collected This Month</span>
               <span class="metric-value" id="totalTips">$0.00</span>
             </div>
-            <div class="metric">
-              <span class="metric-label">Platform Fees (5%)</span>
-              <span class="metric-value" id="platformFees">$0.00</span>
-            </div>
           </div>
         </div>
       </article>
@@ -894,9 +890,8 @@
           ["Restaurant - Venue Tax Summary"],
           ["Generated At", new Date().toISOString()],
           ["Total Venue Tips Collected This Month", analytics.totalTipsFormatted],
-          ["Platform Fees (5%)", analytics.platformFeesFormatted],
           [],
-          ["Ledger ID", "Paid At", "Source", "Pool", "Worker", "Gross Tips", "Platform Fee", "Net Tips", "Note"]
+          ["Ledger ID", "Paid At", "Source", "Pool", "Worker", "Total Tips", "Note"]
         ];
 
         analytics.entries.forEach(function (entry) {
@@ -910,8 +905,6 @@
             pool ? pool.name : "",
             worker ? worker.name : "",
             formatMoney(entry.amountCents, entry.currency),
-            formatMoney(entry.platformFeeCents, entry.currency),
-            formatMoney(entry.netAmountCents, entry.currency),
             entry.note || ""
           ]);
         });
@@ -1001,7 +994,6 @@
       function renderAnalytics() {
         var analytics = getVenueAnalytics();
         document.getElementById("totalTips").textContent = analytics.totalTipsFormatted;
-        document.getElementById("platformFees").textContent = analytics.platformFeesFormatted;
       }
 
       function renderWorkerPicker(database) {
