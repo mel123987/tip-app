@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TipTip | Leave a Tip</title>
+    <link rel="stylesheet" href="assets/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="TipTip home">
+        <span class="brand-mark">T</span>
+        <span>TipTip</span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="signin.html">Staff sign in</a>
+      </nav>
+    </header>
+
+    <main class="page-shell customer-shell">
+      <section class="hero-card">
+        <p class="eyebrow">Fast mobile tipping</p>
+        <h1>Show your appreciation in seconds.</h1>
+        <p class="hero-copy">
+          Choose a worker, enter an amount, and record your tip. If the worker
+          has a payment link, you will see it after submitting.
+        </p>
+      </section>
+
+      <section class="panel" aria-labelledby="tip-form-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Customer tip page</p>
+            <h2 id="tip-form-title">Leave a tip</h2>
+          </div>
+          <a class="small-link" href="signin.html">Manager or worker?</a>
+        </div>
+
+        <div id="customerStatus" class="status hidden" role="status"></div>
+
+        <form id="tipForm" class="stacked-form">
+          <fieldset>
+            <legend>Who helped you?</legend>
+            <div id="workerList" class="worker-grid loading-list">
+              <div class="skeleton-card"></div>
+              <div class="skeleton-card"></div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Tip amount</legend>
+            <div class="amount-grid" role="group" aria-label="Suggested tip amounts">
+              <button class="amount-chip" type="button" data-amount="5">$5</button>
+              <button class="amount-chip" type="button" data-amount="10">$10</button>
+              <button class="amount-chip" type="button" data-amount="15">$15</button>
+              <button class="amount-chip" type="button" data-amount="20">$20</button>
+            </div>
+            <label for="amount">Custom amount</label>
+            <div class="money-input">
+              <span>$</span>
+              <input id="amount" name="amount" inputmode="decimal" autocomplete="off" placeholder="0.00" required>
+            </div>
+          </fieldset>
+
+          <div class="form-row">
+            <label for="customerName">Your name <span class="muted">(optional)</span></label>
+            <input id="customerName" name="customerName" autocomplete="name" placeholder="Jane Customer">
+          </div>
+
+          <div class="form-row">
+            <label for="customerEmail">Email receipt <span class="muted">(optional)</span></label>
+            <input id="customerEmail" name="customerEmail" type="email" autocomplete="email" placeholder="you@example.com">
+          </div>
+
+          <div class="form-row">
+            <label for="message">Message <span class="muted">(optional)</span></label>
+            <textarea id="message" name="message" rows="3" placeholder="Thanks for the great service!"></textarea>
+          </div>
+
+          <button id="submitTipButton" class="primary-button" type="submit">Record tip</button>
+        </form>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Built for quick mobile tips. Staff can sign in to manage dashboards.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/app.js"></script>
+    <script src="assets/customer.js"></script>
+  </body>
+</html>
