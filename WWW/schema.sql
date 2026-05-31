@@ -142,11 +142,6 @@ using (manager_id = auth.uid())
 with check (manager_id = auth.uid());
 
 drop policy if exists "workers_update_claimed_worker" on public.workers;
-create policy "workers_update_claimed_worker"
-on public.workers for update
-to authenticated
-using (user_id = auth.uid())
-with check (user_id = auth.uid());
 
 drop policy if exists "workers_delete_manager" on public.workers;
 create policy "workers_delete_manager"
@@ -237,6 +232,46 @@ begin
 end;
 $$;
 
+create or replace function public.update_claimed_worker_profile(
+  worker_profile_id uuid,
+  display_name text,
+  worker_role_title text,
+  worker_payment_handle text,
+  worker_payment_url text,
+  worker_photo_url text
+)
+returns public.workers
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  updated_worker public.workers;
+begin
+  if nullif(trim(display_name), '') is null then
+    raise exception 'Display name is required.';
+  end if;
+
+  update public.workers
+  set
+    name = trim(display_name),
+    role_title = coalesce(trim(worker_role_title), ''),
+    payment_handle = coalesce(trim(worker_payment_handle), ''),
+    payment_url = coalesce(trim(worker_payment_url), ''),
+    photo_url = coalesce(trim(worker_photo_url), ''),
+    updated_at = now()
+  where id = worker_profile_id
+    and user_id = auth.uid()
+  returning * into updated_worker;
+
+  if updated_worker.id is null then
+    raise exception 'Worker profile was not found for this account.';
+  end if;
+
+  return updated_worker;
+end;
+$$;
+
 grant usage on schema public to anon, authenticated;
 revoke all on public.profiles from anon;
 revoke all on public.workers from anon;
@@ -248,3 +283,4 @@ grant select, insert, update on public.tips to authenticated;
 grant insert on public.tips to anon;
 grant execute on function public.is_active_worker(uuid) to anon, authenticated;
 grant execute on function public.claim_worker_profile(text) to authenticated;
+grant execute on function public.update_claimed_worker_profile(uuid, text, text, text, text, text) to authenticated;

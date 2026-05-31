@@ -156,16 +156,14 @@
     setButtonLoading(button, true, "Saving...");
     const formData = new FormData(profileForm);
 
-    const { error } = await supabase
-      .from("workers")
-      .update({
-        name: String(formData.get("name") || "").trim(),
-        role_title: String(formData.get("roleTitle") || "").trim(),
-        payment_handle: String(formData.get("paymentHandle") || "").trim(),
-        payment_url: String(formData.get("paymentUrl") || "").trim(),
-        photo_url: String(formData.get("photoUrl") || "").trim()
-      })
-      .eq("id", String(formData.get("workerId") || ""));
+    const { error } = await supabase.rpc("update_claimed_worker_profile", {
+      worker_profile_id: String(formData.get("workerId") || ""),
+      display_name: String(formData.get("name") || "").trim(),
+      worker_role_title: String(formData.get("roleTitle") || "").trim(),
+      worker_payment_handle: String(formData.get("paymentHandle") || "").trim(),
+      worker_payment_url: String(formData.get("paymentUrl") || "").trim(),
+      worker_photo_url: String(formData.get("photoUrl") || "").trim()
+    });
 
     setButtonLoading(button, false);
 

@@ -48,6 +48,24 @@
     return Math.round(amount * 100) / 100;
   }
 
+  function safeUrl(value) {
+    if (!value) return "";
+    let raw = String(value).trim();
+    if (!raw) return "";
+    if (!/^[a-z][a-z0-9+.-]*:/i.test(raw) && /^[\w.-]+\.[a-z]{2,}/i.test(raw)) {
+      raw = `https://${raw}`;
+    }
+    try {
+      const url = new URL(raw, window.location.origin);
+      if (url.protocol === "http:" || url.protocol === "https:") {
+        return url.href;
+      }
+    } catch (error) {
+      return "";
+    }
+    return "";
+  }
+
   function setStatus(element, message, type = "info") {
     if (!element) return;
     element.className = `status ${type}`;
@@ -165,8 +183,9 @@
   }
 
   function workerAvatar(worker) {
-    if (worker.photo_url) {
-      return `<span class="avatar"><img src="${escapeHtml(worker.photo_url)}" alt=""></span>`;
+    const photoUrl = safeUrl(worker.photo_url);
+    if (photoUrl) {
+      return `<span class="avatar"><img src="${escapeHtml(photoUrl)}" alt=""></span>`;
     }
     return `<span class="avatar">${escapeHtml(initials(worker.name))}</span>`;
   }
@@ -210,6 +229,7 @@
     formatMoney,
     formatDate,
     parseAmount,
+    safeUrl,
     setStatus,
     setButtonLoading,
     getSession,

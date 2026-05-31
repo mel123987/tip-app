@@ -7,6 +7,7 @@
     escapeHtml,
     formatMoney,
     formatDate,
+    safeUrl,
     setStatus,
     setButtonLoading,
     requireAuth,
@@ -62,7 +63,9 @@
           </tr>
         </thead>
         <tbody>
-          ${workers.map((worker) => `
+          ${workers.map((worker) => {
+            const paymentUrl = safeUrl(worker.payment_url);
+            return `
             <tr>
               <td>
                 <strong>${escapeHtml(worker.name)}</strong><br>
@@ -70,7 +73,7 @@
               </td>
               <td>
                 ${worker.payment_handle ? escapeHtml(worker.payment_handle) : "<span class=\"muted\">No handle</span>"}<br>
-                ${worker.payment_url ? `<a href="${escapeHtml(worker.payment_url)}" target="_blank" rel="noopener">Payment link</a>` : "<span class=\"muted\">No URL</span>"}
+                ${paymentUrl ? `<a href="${escapeHtml(paymentUrl)}" target="_blank" rel="noopener">Payment link</a>` : "<span class=\"muted\">No URL</span>"}
               </td>
               <td>
                 ${worker.claim_code ? `<span class="pill">${escapeHtml(worker.claim_code)}</span>` : "<span class=\"muted\">Claimed</span>"}
@@ -86,7 +89,8 @@
                 </div>
               </td>
             </tr>
-          `).join("")}
+          `;
+          }).join("")}
         </tbody>
       </table>
     `;

@@ -7,6 +7,7 @@
     escapeHtml,
     formatMoney,
     parseAmount,
+    safeUrl,
     setStatus,
     setButtonLoading,
     workerAvatar
@@ -121,8 +122,9 @@
       return;
     }
 
-    const paymentText = worker.payment_url
-      ? ` <a href="${escapeHtml(worker.payment_url)}" target="_blank" rel="noopener">Open ${escapeHtml(worker.name)}'s payment link</a> to complete payment.`
+    const paymentUrl = safeUrl(worker.payment_url);
+    const paymentText = paymentUrl
+      ? ` <a href="${escapeHtml(paymentUrl)}" target="_blank" rel="noopener">Open ${escapeHtml(worker.name)}'s payment link</a> to complete payment.`
       : " Please pay the worker directly using the payment handle shown on this page.";
 
     setStatus(
