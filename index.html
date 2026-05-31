@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TipFlow | Localized Fintech Tipping</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <nav class="topbar" aria-label="Primary">
+          <a class="brand" href="#overview" aria-label="TipFlow home">
+            <span class="brand-mark">TF</span>
+            <span>TipFlow</span>
+          </a>
+
+          <div class="language-switcher" aria-label="Language switcher">
+            <button class="language-pill active" type="button" data-lang="en">EN</button>
+            <button class="language-pill" type="button" data-lang="es">ES</button>
+            <button class="language-pill" type="button" data-lang="de">DE</button>
+            <button class="language-pill" type="button" data-lang="fr">FR</button>
+          </div>
+        </nav>
+
+        <section class="hero-grid" id="overview">
+          <div class="hero-copy">
+            <span class="eyebrow" data-i18n="hero.eyebrow">Localized fintech tipping</span>
+            <h1 data-i18n="hero.title">Premium QR tipping for teams and independent workers.</h1>
+            <p data-i18n="hero.subtitle">
+              One mobile-first ecosystem for customer checkout, worker payouts, and transparent group tip
+              management.
+            </p>
+
+            <div class="hero-actions">
+              <a class="button primary" href="#customer" data-i18n="hero.primaryCta">Launch checkout</a>
+              <a class="button ghost" href="#worker" data-i18n="hero.secondaryCta">Open worker app</a>
+            </div>
+
+            <dl class="hero-stats" aria-label="Platform capabilities">
+              <div>
+                <dt>4</dt>
+                <dd data-i18n="hero.statLanguages">native languages</dd>
+              </div>
+              <div>
+                <dt>3</dt>
+                <dd data-i18n="hero.statExperiences">core experiences</dd>
+              </div>
+              <div>
+                <dt>100%</dt>
+                <dd data-i18n="hero.statSolo">solo worker control</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="phone-frame hero-phone" aria-label="TipFlow mobile overview">
+            <div class="phone-status">
+              <span>9:41</span>
+              <span>5G 100%</span>
+            </div>
+            <div class="wallet-card">
+              <span class="eyebrow" data-i18n="hero.phoneEyebrow">Today in tips</span>
+              <strong id="heroTotal">$428.50</strong>
+              <span data-i18n="hero.phoneCaption">Ready for instant payout</span>
+            </div>
+            <div class="mini-card-row">
+              <div class="mini-card">
+                <span data-i18n="hero.phoneCard1">Apple Pay</span>
+                <strong data-i18n="hero.phoneCard1Value">1 tap</strong>
+              </div>
+              <div class="mini-card accent">
+                <span data-i18n="hero.phoneCard2">Group split</span>
+                <strong data-i18n="hero.phoneCard2Value">Live</strong>
+              </div>
+            </div>
+            <div class="activity-list">
+              <div>
+                <span class="activity-dot green"></span>
+                <p data-i18n="hero.activity1">Terrace tip shared with 4 workers</p>
+              </div>
+              <div>
+                <span class="activity-dot purple"></span>
+                <p data-i18n="hero.activity2">Solo QR payment settled</p>
+              </div>
+              <div>
+                <span class="activity-dot blue"></span>
+                <p data-i18n="hero.activity3">Tax document generated</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </header>
+
+      <main>
+        <section class="section customer-section" id="customer">
+          <div class="section-heading">
+            <span class="eyebrow" data-i18n="customer.eyebrow">Customer checkout</span>
+            <h2 data-i18n="customer.title">Scan the QR. Tip instantly. No staff search.</h2>
+            <p data-i18n="customer.subtitle">
+              Unique venue, section, and solo QR codes route customers directly to a localized Stripe-powered
+              checkout screen with wallet-first payment options.
+            </p>
+          </div>
+
+          <div class="customer-grid">
+            <article class="qr-card panel">
+              <div class="panel-topline">
+                <span data-i18n="customer.qrLabel">Scanned QR destination</span>
+                <strong id="qrRoute">tipflow.app/qr/terrace-24</strong>
+              </div>
+              <div class="qr-code" aria-label="Decorative QR code">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+              <div class="segmented-control" role="group" aria-label="QR routing">
+                <button class="active" type="button" data-route="terrace" data-i18n="customer.routeTerrace">
+                  Terrace
+                </button>
+                <button type="button" data-route="bar" data-i18n="customer.routeBar">Bar</button>
+                <button type="button" data-route="solo" data-i18n="customer.routeSolo">Solo</button>
+              </div>
+            </article>
+
+            <article class="checkout-card panel" aria-label="Localized checkout preview">
+              <div class="checkout-header">
+                <div>
+                  <span class="eyebrow" data-i18n="customer.checkoutEyebrow">Secure checkout</span>
+                  <h3 id="checkoutTitle" data-i18n="customer.checkoutTitleTerrace">Tip Terrace Team</h3>
+                </div>
+                <span class="stripe-badge">Stripe</span>
+              </div>
+
+              <div class="tip-amounts" role="group" aria-label="Tip amounts">
+                <button type="button" data-amount="5">$5</button>
+                <button class="active" type="button" data-amount="10">$10</button>
+                <button type="button" data-amount="20">$20</button>
+                <button type="button" data-amount="custom" data-i18n="customer.customAmount">Custom</button>
+              </div>
+
+              <div class="payment-stack">
+                <button class="wallet-button apple" type="button">
+                  <span>Apple Pay</span>
+                  <strong id="applePayAmount">$10.00</strong>
+                </button>
+                <button class="wallet-button google" type="button">
+                  <span>Google Pay</span>
+                  <strong id="googlePayAmount">$10.00</strong>
+                </button>
+                <button class="card-entry" type="button" data-i18n="customer.cardEntry">
+                  Enter card details
+                </button>
+              </div>
+
+              <div class="receipt-preview">
+                <span data-i18n="customer.receiptLabel">Transparent split preview</span>
+                <strong id="receiptSplit">4 x $2.50</strong>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section worker-section" id="worker">
+          <div class="section-heading">
+            <span class="eyebrow" data-i18n="worker.eyebrow">Worker dashboard</span>
+            <h2 data-i18n="worker.title">Company-connected or fully independent in one app.</h2>
+            <p data-i18n="worker.subtitle">
+              Workers can stay tied to management pools or switch to a private solo operation with direct Stripe
+              Connect onboarding, personal QR codes, instant payout, and localized tax files.
+            </p>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="phone-frame worker-phone" aria-label="Worker dashboard preview">
+              <div class="phone-status">
+                <span>9:41</span>
+                <span>5G 100%</span>
+              </div>
+
+              <div class="mode-toggle" role="group" aria-label="Worker operating mode">
+                <button class="active" type="button" data-mode="company" data-i18n="worker.companyMode">
+                  Company Mode
+                </button>
+                <button type="button" data-mode="solo" data-i18n="worker.soloMode">
+                  Independent Solo
+                </button>
+              </div>
+
+              <div class="earnings-card">
+                <span class="eyebrow" id="workerModeLabel" data-i18n="worker.companyMode">Company Mode</span>
+                <strong id="workerBalance">$428.50</strong>
+                <p id="workerModeDescription" data-i18n="worker.companyDescription">
+                  Earnings are connected to venue-managed pools and section assignments.
+                </p>
+                <button class="button primary full-width" type="button" id="cashOutButton" data-i18n="worker.cashOut">
+                  Cash Out
+                </button>
+              </div>
+
+              <div class="tab-bar" role="tablist" aria-label="Worker dashboard tabs">
+                <button class="active" type="button" data-worker-tab="earnings" data-i18n="worker.tabEarnings">
+                  Earnings
+                </button>
+                <button type="button" data-worker-tab="qr" data-i18n="worker.tabQr">QR</button>
+                <button type="button" data-worker-tab="tax" data-i18n="worker.tabTax">Tax</button>
+              </div>
+
+              <div class="worker-tab active" id="worker-tab-earnings">
+                <div class="split-card">
+                  <span data-i18n="worker.shareLabel">Your live section shares</span>
+                  <div class="split-line">
+                    <strong data-i18n="manager.terrace">Terrace</strong>
+                    <span id="workerTerraceShare">$24.00</span>
+                  </div>
+                  <div class="split-line">
+                    <strong data-i18n="manager.bar">Bar</strong>
+                    <span id="workerBarShare">$18.75</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="worker-tab" id="worker-tab-qr">
+                <div class="solo-qr-card">
+                  <span data-i18n="worker.qrLabel">Standalone solo QR</span>
+                  <strong id="soloQrCode">TF-SOLO-MAYA-8842</strong>
+                  <button class="button ghost full-width" type="button" id="regenerateQr" data-i18n="worker.regenerateQr">
+                    Generate new QR
+                  </button>
+                </div>
+              </div>
+
+              <div class="worker-tab" id="worker-tab-tax">
+                <div class="tax-card">
+                  <span data-i18n="worker.taxTitle">Tax Compliance</span>
+                  <p data-i18n="worker.taxDescription">Download localized income statements and payout records.</p>
+                  <button class="button primary full-width" type="button" data-i18n="worker.downloadTax">
+                    Download documents
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <div class="feature-stack">
+              <article class="feature-card panel">
+                <span class="feature-icon">01</span>
+                <h3 data-i18n="worker.feature1Title">Stripe Connect solo onboarding</h3>
+                <p data-i18n="worker.feature1Text">
+                  Independent workers connect their own bank accounts and keep personal tips outside manager
+                  visibility.
+                </p>
+              </article>
+              <article class="feature-card panel">
+                <span class="feature-icon">02</span>
+                <h3 data-i18n="worker.feature2Title">Instant cash out</h3>
+                <p data-i18n="worker.feature2Text">
+                  A dedicated payout action gives workers immediate access to eligible balances.
+                </p>
+              </article>
+              <article class="feature-card panel">
+                <span class="feature-icon">03</span>
+                <h3 data-i18n="worker.feature3Title">Localized tax center</h3>
+                <p data-i18n="worker.feature3Text">
+                  Income documents match the worker's selected language and operating mode.
+                </p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section manager-section" id="manager">
+          <div class="section-heading">
+            <span class="eyebrow" data-i18n="manager.eyebrow">Manager dashboard</span>
+            <h2 data-i18n="manager.title">Group tipping with real-time equal splits.</h2>
+            <p data-i18n="manager.subtitle">
+              Create business sections, assign workers, and show every eligible worker their transparent share as
+              tips arrive.
+            </p>
+          </div>
+
+          <div class="manager-grid">
+            <article class="panel control-panel">
+              <div class="panel-topline">
+                <span data-i18n="manager.controlTitle">Group tipping control panel</span>
+                <button class="button compact" type="button" id="addTipButton" data-i18n="manager.simulateTip">
+                  Simulate tip
+                </button>
+              </div>
+
+              <form class="section-form" id="sectionForm">
+                <label>
+                  <span data-i18n="manager.sectionName">Section name</span>
+                  <input id="sectionName" type="text" autocomplete="off" placeholder="Patio" />
+                </label>
+                <label>
+                  <span data-i18n="manager.workerNames">Workers</span>
+                  <input id="workerNames" type="text" autocomplete="off" placeholder="Ava, Noah, Lina" />
+                </label>
+                <button class="button primary" type="submit" data-i18n="manager.createSection">
+                  Create section
+                </button>
+              </form>
+
+              <div class="section-list" id="sectionList" aria-live="polite"></div>
+            </article>
+
+            <article class="panel transparency-panel">
+              <div class="panel-topline">
+                <span data-i18n="manager.transparencyTitle">Worker-visible split ledger</span>
+                <strong id="totalGroupTips">$390.00</strong>
+              </div>
+              <div class="ledger" id="splitLedger"></div>
+              <div class="tax-download">
+                <div>
+                  <span data-i18n="manager.taxPortal">Corporate tax portal</span>
+                  <p data-i18n="manager.taxPortalText">Download worker tax forms and grouped section reports.</p>
+                </div>
+                <button class="button ghost" type="button" data-i18n="manager.downloadForms">Download forms</button>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
