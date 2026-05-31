@@ -1,0 +1,34 @@
+{
+  "name": "Tip Portal",
+  "short_name": "Tip",
+  "description": "Private worker and management app for Tip venue operations.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fbfaf7",
+  "theme_color": "#0d0d0d",
+  "orientation": "any",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "icons/tip-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Worker Dashboard",
+      "short_name": "Worker",
+      "url": "./worker.html",
+      "description": "Open the worker tip dashboard."
+    },
+    {
+      "name": "Management Portal",
+      "short_name": "Manager",
+      "url": "./manager.html",
+      "description": "Open the venue management console."
+    }
+  ]
+}

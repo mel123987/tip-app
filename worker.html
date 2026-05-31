@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d0d0d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Tip Worker" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/tip-icon.svg" type="image/svg+xml" />
+  <title>Tip. Portal - Worker Dashboard</title>
+  <style>
+    :root {
+      --ink: #080808;
+      --muted: #6f6b63;
+      --line: #e8e2d8;
+      --paper: #ffffff;
+      --soft: #f7f4ef;
+      --gold: #c6a15b;
+      --gold-dark: #9d7936;
+      --shadow: 0 24px 80px rgba(8, 8, 8, 0.11);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 0%, rgba(198, 161, 91, 0.18), transparent 28rem),
+        linear-gradient(180deg, #ffffff 0%, #f8f5f0 100%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: -0.01em;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .phone-shell {
+      width: min(100%, 430px);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 22px 18px 36px;
+      position: relative;
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 26px;
+      padding-top: max(0px, env(safe-area-inset-top));
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.06em;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      color: var(--paper);
+      background: var(--ink);
+      border-radius: 50%;
+      font-size: 17px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+    }
+
+    .logout-link {
+      color: var(--ink);
+      border: 0;
+      background: transparent;
+      padding: 10px 0 10px 12px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .intro {
+      margin: 0 0 18px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--gold-dark);
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 12ch;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(42px, 11vw, 56px);
+      font-weight: 400;
+      line-height: 0.92;
+      letter-spacing: -0.08em;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(8, 8, 8, 0.08);
+      background: rgba(255, 255, 255, 0.86);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(22px);
+    }
+
+    .balance-card {
+      padding: 24px;
+      color: var(--paper);
+      background:
+        linear-gradient(135deg, rgba(198, 161, 91, 0.18), transparent 44%),
+        linear-gradient(145deg, #050505 0%, #171511 100%);
+      border-color: rgba(198, 161, 91, 0.36);
+    }
+
+    .balance-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -54px -80px auto;
+      width: 190px;
+      height: 190px;
+      border: 1px solid rgba(198, 161, 91, 0.24);
+      border-radius: 50%;
+    }
+
+    .balance-label {
+      margin: 0 0 8px;
+      color: rgba(255, 255, 255, 0.66);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .balance-amount {
+      margin: 0 0 22px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 42px;
+      font-weight: 400;
+      letter-spacing: -0.06em;
+    }
+
+    .balance-copy {
+      margin: 0 0 20px;
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .section-card {
+      padding: 20px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .caption {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .button {
+      width: 100%;
+      min-height: 52px;
+      border: 0;
+      border-radius: 999px;
+      padding: 0 18px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 760;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+    }
+
+    .button:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    .button-gold {
+      color: #14100a;
+      background: linear-gradient(135deg, #f0d48b 0%, var(--gold) 46%, #a17b36 100%);
+      box-shadow: 0 14px 34px rgba(198, 161, 91, 0.34);
+    }
+
+    .button-outline {
+      color: var(--ink);
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 12px 30px rgba(8, 8, 8, 0.06);
+    }
+
+    .button-dark {
+      color: var(--paper);
+      background: var(--ink);
+      box-shadow: 0 16px 34px rgba(8, 8, 8, 0.16);
+    }
+
+    .asset-preview {
+      display: grid;
+      grid-template-columns: 112px 1fr;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .qr-card {
+      position: relative;
+      display: grid;
+      min-height: 142px;
+      place-items: center;
+      padding: 14px;
+      background:
+        linear-gradient(#fff, #fff) padding-box,
+        linear-gradient(135deg, rgba(198, 161, 91, 0.72), rgba(8, 8, 8, 0.14)) border-box;
+      border: 1px solid transparent;
+      border-radius: 20px;
+      box-shadow: 0 16px 36px rgba(8, 8, 8, 0.09);
+    }
+
+    .qr-card::before {
+      content: "Tip.";
+      position: absolute;
+      top: 12px;
+      left: 14px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .qr-card::after {
+      content: "ANA";
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      color: var(--gold-dark);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+    }
+
+    .qr-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 8px);
+      grid-template-rows: repeat(7, 8px);
+      gap: 4px;
+      padding-top: 10px;
+    }
+
+    .qr-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--ink);
+      border-radius: 2px;
+    }
+
+    .qr-dot.gold {
+      background: var(--gold);
+    }
+
+    .asset-copy {
+      min-width: 0;
+    }
+
+    .asset-title {
+      margin: 0 0 7px;
+      font-size: 18px;
+      font-weight: 730;
+      letter-spacing: -0.04em;
+    }
+
+    .asset-description {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .tips-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tip-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .tip-item:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .tip-source {
+      margin: 0 0 4px;
+      font-size: 15px;
+      font-weight: 720;
+      letter-spacing: -0.03em;
+    }
+
+    .tip-meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .tip-value {
+      color: var(--gold-dark);
+      font-size: 16px;
+      font-weight: 820;
+      white-space: nowrap;
+    }
+
+    .install-card {
+      padding: 20px;
+      background:
+        linear-gradient(135deg, rgba(198, 161, 91, 0.16), transparent 58%),
+        rgba(255, 255, 255, 0.9);
+    }
+
+    .install-card p {
+      margin: 8px 0 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .button[hidden] {
+      display: none;
+    }
+
+    .button:disabled {
+      cursor: default;
+      opacity: 0.68;
+    }
+
+    .empty-state {
+      margin: 0;
+      padding: 18px 0 4px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      border-top: 1px solid var(--line);
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 20;
+      left: 50%;
+      bottom: 22px;
+      width: min(calc(100% - 36px), 392px);
+      padding: 14px 16px;
+      color: var(--paper);
+      background: rgba(8, 8, 8, 0.92);
+      border: 1px solid rgba(198, 161, 91, 0.34);
+      border-radius: 18px;
+      box-shadow: 0 18px 50px rgba(8, 8, 8, 0.22);
+      opacity: 0;
+      transform: translate(-50%, 16px);
+      pointer-events: none;
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+
+    .toast.is-visible {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .toast-title {
+      display: block;
+      margin-bottom: 3px;
+      color: #f0d48b;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .toast-message {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    @media (min-width: 560px) {
+      body {
+        display: grid;
+        place-items: center;
+        padding: 32px 0;
+      }
+
+      .phone-shell {
+        min-height: auto;
+        border: 1px solid rgba(8, 8, 8, 0.08);
+        border-radius: 42px;
+        background: rgba(255, 255, 255, 0.52);
+        box-shadow: 0 36px 110px rgba(8, 8, 8, 0.12);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="phone-shell" aria-label="Worker Dashboard">
+    <header class="app-header">
+      <div class="brand" aria-label="Tip Portal">
+        <span class="brand-mark">T</span>
+        <span>Tip. Portal</span>
+      </div>
+      <button class="logout-link" type="button" data-action="logout">Log Out</button>
+    </header>
+
+    <section class="intro" aria-labelledby="dashboard-title">
+      <p class="eyebrow">Worker Dashboard</p>
+      <h1 id="dashboard-title">Today feels generous.</h1>
+    </section>
+
+    <div class="dashboard-grid">
+      <section class="card balance-card" aria-labelledby="balance-title">
+        <p class="balance-label" id="balance-title">Available Balance</p>
+        <p class="balance-amount" id="availableBalance">$0.00</p>
+        <p class="balance-copy">Move your earned tips directly to your linked bank account with instant settlement.</p>
+        <button class="button button-gold" type="button" data-action="payout">
+          Instant Payout to Bank
+        </button>
+      </section>
+
+      <section class="card section-card" aria-labelledby="assets-title">
+        <div class="section-heading">
+          <h2 id="assets-title">My Assets</h2>
+          <p class="caption">Personal QR</p>
+        </div>
+
+        <div class="asset-preview">
+          <div class="qr-card" aria-label="Preview of personal QR code card">
+            <div class="qr-grid" aria-hidden="true">
+              <span class="qr-dot"></span><span class="qr-dot"></span><span class="qr-dot"></span><span></span><span class="qr-dot gold"></span><span class="qr-dot"></span><span class="qr-dot"></span>
+              <span class="qr-dot"></span><span></span><span class="qr-dot"></span><span></span><span class="qr-dot"></span><span></span><span class="qr-dot"></span>
+              <span class="qr-dot"></span><span class="qr-dot"></span><span class="qr-dot"></span><span class="qr-dot gold"></span><span></span><span class="qr-dot"></span><span></span>
+              <span></span><span></span><span class="qr-dot"></span><span></span><span class="qr-dot"></span><span></span><span class="qr-dot gold"></span>
+              <span class="qr-dot gold"></span><span class="qr-dot"></span><span></span><span class="qr-dot"></span><span class="qr-dot"></span><span class="qr-dot"></span><span></span>
+              <span class="qr-dot"></span><span></span><span class="qr-dot"></span><span></span><span class="qr-dot gold"></span><span></span><span class="qr-dot"></span>
+              <span class="qr-dot"></span><span class="qr-dot"></span><span></span><span class="qr-dot gold"></span><span></span><span class="qr-dot"></span><span class="qr-dot"></span>
+            </div>
+          </div>
+
+          <div class="asset-copy">
+            <p class="asset-title" id="workerName">Worker</p>
+            <p class="asset-description">Display this refined card at service points, rooms, tables, or events.</p>
+          </div>
+        </div>
+
+        <button class="button button-outline" type="button" data-action="download-qr">
+          Download QR Code Card
+        </button>
+      </section>
+
+      <section class="card section-card" aria-labelledby="reporting-title">
+        <div class="section-heading">
+          <h2 id="reporting-title">Reporting</h2>
+          <p class="caption" id="statementMonth">Current Month</p>
+        </div>
+        <button class="button button-dark" type="button" data-action="export-tax">
+          Export Monthly Statement (CSV)
+        </button>
+      </section>
+
+      <section class="card install-card" aria-labelledby="install-title">
+        <h2 id="install-title">Download Tip</h2>
+        <p>Install this worker dashboard on your phone for fast access during service.</p>
+        <button class="button button-outline" type="button" data-install-button hidden>Download App</button>
+      </section>
+
+      <section class="card section-card" aria-labelledby="recent-title">
+        <div class="section-heading">
+          <h2 id="recent-title">Recent Tips</h2>
+          <p class="caption">Live</p>
+        </div>
+
+        <ul class="tips-list" id="recentTips">
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast" role="status" aria-live="polite" aria-atomic="true" id="toast">
+    <strong class="toast-title" id="toast-title">Success</strong>
+    <p class="toast-message" id="toast-message">Action complete.</p>
+  </div>
+
+  <script src="js/install.js"></script>
+  <script>
+    const STORAGE_KEY = "restaurant.tip.mockDatabase.v1";
+    const SESSION_KEY = "tip.portal.session.v1";
+    const PLATFORM_FEE_RATE = 0.05;
+    const DEFAULT_DATABASE = {
+      version: 1,
+      venue: { id: "restaurant", name: "Restaurant", currency: "USD" },
+      pools: [
+        {
+          id: "terrace-bar",
+          name: "Terrace Bar",
+          workerIds: ["ava-laurent", "marco-vale", "nina-sato", "theo-martin"],
+          active: true,
+          createdAt: "2026-05-01T12:00:00.000Z"
+        },
+        {
+          id: "main-dining",
+          name: "Main Dining",
+          workerIds: ["elena-reed", "jon-bell", "maya-chen", "omar-kline", "priya-shah", "ren-ito", "sofia-cross", "wes-hart"],
+          active: true,
+          createdAt: "2026-05-01T12:00:00.000Z"
+        }
+      ],
+      workers: [
+        { id: "ava-laurent", name: "Ava Laurent", role: "Bartender", groupId: "terrace-bar", active: true },
+        { id: "marco-vale", name: "Marco Vale", role: "Bartender", groupId: "terrace-bar", active: true },
+        { id: "nina-sato", name: "Nina Sato", role: "Barback", groupId: "terrace-bar", active: true },
+        { id: "theo-martin", name: "Theo Martin", role: "Server", groupId: "terrace-bar", active: true },
+        { id: "elena-reed", name: "Elena Reed", role: "Captain", groupId: "main-dining", active: true },
+        { id: "jon-bell", name: "Jon Bell", role: "Server", groupId: "main-dining", active: true },
+        { id: "maya-chen", name: "Maya Chen", role: "Server", groupId: "main-dining", active: true },
+        { id: "omar-kline", name: "Omar Kline", role: "Sommelier", groupId: "main-dining", active: true },
+        { id: "priya-shah", name: "Priya Shah", role: "Server", groupId: "main-dining", active: true },
+        { id: "ren-ito", name: "Ren Ito", role: "Runner", groupId: "main-dining", active: true },
+        { id: "sofia-cross", name: "Sofia Cross", role: "Host", groupId: "main-dining", active: true },
+        { id: "wes-hart", name: "Wes Hart", role: "Runner", groupId: "main-dining", active: true }
+      ],
+      ledger: []
+    };
+
+    const toast = document.getElementById("toast");
+    const toastTitle = document.getElementById("toast-title");
+    const toastMessage = document.getElementById("toast-message");
+    const balanceEl = document.getElementById("availableBalance");
+    const workerNameEl = document.getElementById("workerName");
+    const tipsListEl = document.getElementById("recentTips");
+    const statementMonthEl = document.getElementById("statementMonth");
+    let toastTimer;
+    let currentWorker = null;
+    let currentBalance = { earningsCents: 0, formatted: "$0.00" };
+
+    function deepClone(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    function loadDatabase() {
+      try {
+        const saved = window.localStorage.getItem(STORAGE_KEY);
+        const database = saved ? JSON.parse(saved) : deepClone(DEFAULT_DATABASE);
+        database.venue = database.venue || deepClone(DEFAULT_DATABASE.venue);
+        database.pools = Array.isArray(database.pools) ? database.pools : deepClone(DEFAULT_DATABASE.pools);
+        database.workers = Array.isArray(database.workers) ? database.workers : deepClone(DEFAULT_DATABASE.workers);
+        database.ledger = Array.isArray(database.ledger) ? database.ledger : [];
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(database));
+        return database;
+      } catch (error) {
+        console.warn("Tip worker dashboard reset its mock database after a read error.", error);
+        const freshDatabase = deepClone(DEFAULT_DATABASE);
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(freshDatabase));
+        return freshDatabase;
+      }
+    }
+
+    function getSession() {
+      try {
+        return JSON.parse(window.localStorage.getItem(SESSION_KEY)) || {};
+      } catch (error) {
+        return {};
+      }
+    }
+
+    function formatMoney(cents, currency) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: currency || "USD"
+      }).format((Number(cents) || 0) / 100);
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function showToast(title, message) {
+      clearTimeout(toastTimer);
+      toastTitle.textContent = title;
+      toastMessage.textContent = message;
+      toast.classList.add("is-visible");
+      toastTimer = setTimeout(() => toast.classList.remove("is-visible"), 3200);
+    }
+
+    function getWorkerShare(entry, workerId) {
+      if (entry.workerId === workerId) {
+        return entry.netAmountCents;
+      }
+
+      if (Array.isArray(entry.splitWorkerIds) && entry.splitWorkerIds.indexOf(workerId) !== -1) {
+        return Math.floor(entry.netAmountCents / entry.splitWorkerIds.length);
+      }
+
+      return 0;
+    }
+
+    function getWorkerEntries(database, workerId) {
+      return database.ledger
+        .filter(function (entry) {
+          return entry.status === "succeeded" && getWorkerShare(entry, workerId) > 0;
+        })
+        .sort(function (a, b) {
+          return new Date(b.paidAt).getTime() - new Date(a.paidAt).getTime();
+        });
+    }
+
+    function renderDashboard() {
+      const database = loadDatabase();
+      const session = getSession();
+      const workerId = session.workerId || "ava-laurent";
+      currentWorker = database.workers.find(function (worker) {
+        return worker.id === workerId;
+      }) || database.workers[0];
+
+      const entries = getWorkerEntries(database, currentWorker.id);
+      const earningsCents = entries.reduce(function (total, entry) {
+        return total + getWorkerShare(entry, currentWorker.id);
+      }, 0);
+
+      currentBalance = {
+        earningsCents: earningsCents,
+        formatted: formatMoney(earningsCents, database.venue.currency)
+      };
+
+      workerNameEl.textContent = currentWorker.name;
+      balanceEl.textContent = currentBalance.formatted;
+      statementMonthEl.textContent = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(new Date());
+
+      if (!entries.length) {
+        tipsListEl.innerHTML = '<li class="empty-state">No ledger activity yet. Your manager dashboard will sync approved tip entries here.</li>';
+        return;
+      }
+
+      tipsListEl.innerHTML = entries.slice(0, 5).map(function (entry) {
+        const share = getWorkerShare(entry, currentWorker.id);
+        const source = entry.note || entry.source || "Ledger entry";
+        return [
+          '<li class="tip-item">',
+          "  <div>",
+          '    <p class="tip-source">' + escapeHtml(source) + "</p>",
+          '    <p class="tip-meta">' + new Date(entry.paidAt).toLocaleString() + "</p>",
+          "  </div>",
+          '  <span class="tip-value">+' + formatMoney(share, entry.currency || database.venue.currency) + "</span>",
+          "</li>"
+        ].join("");
+      }).join("");
+    }
+
+    function downloadQrCard() {
+      const workerName = currentWorker ? currentWorker.name : "Worker";
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420">
+          <rect width="720" height="420" rx="42" fill="#ffffff"/>
+          <rect x="18" y="18" width="684" height="384" rx="34" fill="none" stroke="#c6a15b" stroke-width="3"/>
+          <text x="52" y="78" fill="#080808" font-family="Arial, sans-serif" font-size="38" font-weight="700">Tip.</text>
+          <text x="52" y="126" fill="#6f6b63" font-family="Arial, sans-serif" font-size="18" letter-spacing="3">PERSONAL QR CODE</text>
+          <rect x="434" y="64" width="220" height="220" rx="18" fill="#080808"/>
+          <g fill="#ffffff">
+            <rect x="464" y="94" width="34" height="34"/><rect x="512" y="94" width="34" height="34"/><rect x="560" y="94" width="34" height="34"/>
+            <rect x="464" y="142" width="34" height="34"/><rect x="560" y="142" width="34" height="34"/>
+            <rect x="464" y="190" width="34" height="34"/><rect x="512" y="190" width="34" height="34"/><rect x="608" y="190" width="34" height="34"/>
+            <rect x="512" y="238" width="34" height="34"/><rect x="560" y="238" width="34" height="34"/>
+          </g>
+          <g fill="#c6a15b">
+            <rect x="608" y="94" width="34" height="34"/><rect x="512" y="142" width="34" height="34"/><rect x="608" y="238" width="34" height="34"/>
+          </g>
+          <text x="52" y="286" fill="#080808" font-family="Arial, sans-serif" font-size="54" font-weight="700">${escapeHtml(workerName)}</text>
+          <text x="52" y="330" fill="#6f6b63" font-family="Arial, sans-serif" font-size="24">Display for cashless tips.</text>
+        </svg>
+      `.trim();
+
+      const blob = new Blob([svg], { type: "image/svg+xml" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "tip-qr-code-card.svg";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showToast("Downloaded", "Your Tip QR code card has been saved as an SVG.");
+    }
+
+    function exportMonthlyStatement() {
+      const database = loadDatabase();
+      const entries = currentWorker ? getWorkerEntries(database, currentWorker.id) : [];
+      const rows = [
+        ["Tip Worker Statement"],
+        ["Worker", currentWorker ? currentWorker.name : "Worker"],
+        ["Generated At", new Date().toISOString()],
+        ["Available Balance", currentBalance.formatted],
+        [],
+        ["Paid At", "Source", "Worker Share"]
+      ];
+
+      entries.forEach(function (entry) {
+        rows.push([
+          entry.paidAt,
+          entry.note || entry.source || "Ledger entry",
+          formatMoney(getWorkerShare(entry, currentWorker.id), entry.currency || database.venue.currency)
+        ]);
+      });
+
+      const csv = rows.map(function (row) {
+        return row.map(function (cell) {
+          return '"' + String(cell == null ? "" : cell).replace(/"/g, '""') + '"';
+        }).join(",");
+      }).join("\n");
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "tip-worker-statement.csv";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showToast("Statement exported", "Your worker statement CSV has been downloaded.");
+    }
+
+    function handleAction(event) {
+      const target = event.target.closest("[data-action]");
+      const action = target && target.dataset.action;
+      if (!action) return;
+
+      if (action === "logout") {
+        window.localStorage.removeItem(SESSION_KEY);
+        window.location.href = "index.html";
+        return;
+      }
+
+      if (action === "download-qr") {
+        downloadQrCard();
+        return;
+      }
+
+      if (action === "export-tax") {
+        exportMonthlyStatement();
+        return;
+      }
+
+      if (action === "payout") {
+        showToast("Payout requested", currentBalance.formatted + " is ready for transfer to your linked bank account.");
+      }
+    }
+
+    document.addEventListener("click", handleAction);
+    window.addEventListener("storage", function (event) {
+      if (event.key === STORAGE_KEY) {
+        renderDashboard();
+      }
+    });
+    window.addEventListener("restaurant:tip-ledger-updated", renderDashboard);
+    renderDashboard();
+  </script>
+</body>
+</html>
