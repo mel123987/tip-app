@@ -459,13 +459,29 @@ function escapeHtml(value) {
 }
 
 function currency(value) {
-  const cacheKey = `${state.lang}-USD`;
+  const cacheKey = `${state.lang}-EUR`;
   if (!formatterCache.has(cacheKey)) {
     formatterCache.set(
       cacheKey,
       new Intl.NumberFormat(state.lang, {
         style: "currency",
-        currency: "USD",
+        currency: "EUR",
+      }),
+    );
+  }
+
+  return formatterCache.get(cacheKey).format(value);
+}
+
+function compactCurrency(value) {
+  const cacheKey = `${state.lang}-EUR-compact`;
+  if (!formatterCache.has(cacheKey)) {
+    formatterCache.set(
+      cacheKey,
+      new Intl.NumberFormat(state.lang, {
+        style: "currency",
+        currency: "EUR",
+        maximumFractionDigits: 0,
       }),
     );
   }
@@ -521,6 +537,12 @@ function updateCheckout() {
   document.getElementById("googlePayAmount").textContent = amountText;
   document.getElementById("receiptSplit").textContent =
     state.route === "solo" ? t("customer.soloReceipt") : `${splitCount} x ${splitValue}`;
+
+  document.querySelectorAll("[data-amount]").forEach((button) => {
+    if (button.dataset.amount !== "custom") {
+      button.textContent = compactCurrency(Number(button.dataset.amount));
+    }
+  });
 
   setActive(document.querySelectorAll("[data-route]"), (button) => button.dataset.route === state.route);
   setActive(document.querySelectorAll("[data-amount]"), (button) => button.dataset.amount === state.amountPreset);
